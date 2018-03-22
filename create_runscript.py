@@ -30,14 +30,16 @@ def write_pism_script(settings):
 
     print fname, "written."
 
-def copy_config_override(settings):
+def copy_from_template(settings, filename):
 
     experiment_dir = os.path.join(settings.pism_experiments_dir,
                                   settings.experiment)
 
-    shutil.copy("templates/config_override.cdl",experiment_dir)
+    shutil.copy(os.path.join("templates",filename), experiment_dir)
+    print os.path.join(experiment_dir, filename), "copied."
 
 if __name__ == "__main__":
 
     write_pism_script(settings)
-    copy_config_override(settings)
+    copy_from_template(settings, "config_override.cdl")
+    copy_from_template(settings, "submit.sh")

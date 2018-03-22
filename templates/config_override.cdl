@@ -1,0 +1,6 @@
+netcdf config_overrride {
+    variables:
+    byte pism_overrides;
+    pism_overrides:constants.standard_gravity = 3.728;
+    pism_overrides:constants.standard_gravity_doc = "m s-2; standard gravity on Mars";
+}

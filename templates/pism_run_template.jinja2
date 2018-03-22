@@ -1,0 +1,84 @@
+#!/bin/bash
+# created by matthias.mengel@pik-potsdam.de
+
+# variables depending on machine
+pismcode_dir={{settings.pismcode_dir}}
+input_data_dir={{settings.input_data_dir}}
+PISM_EXEC={{settings.pism_exec}}
+
+# variables depending on experiment name
+runname=`echo $PWD | awk -F/ '{print $NF}'`
+code_version=`echo $PWD | awk -F/ '{print $NF}' | awk -F_ '{print $1}'`
+
+outdir={{settings.working_dir}}/$runname
+
+# use only MPI if job is submitted
+if [ -n "${PISM_ON_CLUSTER:+1}" ]; then  # check if env var is set
+  echo "This run was submitted, use MPI"
+  PISM_MPIDO={{settings.pism_mpi_do}}
+  NN="$1"
+else
+  echo "This is interactive, skip use of MPI"
+  PISM_MPIDO=""
+  NN=""
+fi
+
+# get new pism code if fetch is argument
+if [ "$1" = "fetch" ]; then
+    mkdir -p $outdir/log/
+    # set parameters other than default ones.
+    ncgen3 config_override.cdl -o $outdir/config_override.nc
+    rsync -aCv $pismcode_dir/$code_version/bin/pismr $outdir/bin/
+fi
+
+# set input files
+startfile=$input_data_dir/{{settings.startfile}}
+atmfile=$input_data_dir/{{settings.atmfile}}
+oceanfile=$input_data_dir/{{settings.oceanfile}}
+
+# time settings and output options
+startyear={{settings.startyear}}
+length={{settings.length}}
+extratm=0:50:1000000
+timestm=0:1:1000000
+snapstm=0:500:1000000
+
+extra_opts="-extra_file extra -extra_split -extra_times $extratm"
+ts_opts="-ts_times $timestm"
+snaps_opts="-save_file snapshots -save_times $snapstm -save_split -save_size medium"
+output_opts="$extra_opts $snaps_opts $ts_opts"
+
+# boundary conditions
+atm_opts="-surface given -surface_given_file $atmfile"
+ocean_opts="-ocean cavity -ocean_cavity_file $oceanfile -gamma_T 1.0e-5 \
+            -overturning_coeff 0.5e6 \
+            -exclude_icerises -continental_shelf_depth -2000"
+bed_opts="-bed_def none -hydrology null"
+
+calv_opts="-calving eigen_calving,thickness_calving -eigen_calving_K 1e17  \
+         -thickness_calving_threshold 200"
+subgl_opts="-subgl -no_subgl_basal_melt"
+
+# ice physics
+basal_opts="-yield_stress mohr_coulomb \
+            -pseudo_plastic -pseudo_plastic_q 0.5 \
+            -pseudo_plastic_uthreshold 100.0 \
+            -till_effective_fraction_overburden 0.04"
+stress_opts="-pik -stress_balance ssa+sia -sia_e 2.0 \
+             -ssa_method fd -ssa_e 1.0"
+skip_opts="-skip -skip_max 10"
+
+# technical
+init_opts="-i $infile -ys $start -y $length"
+run_opts="-config_override $outdir/config_override.nc -options_left \
+          -o_format netcdf4_parallel"
+
+options="$init_opts $run_opts $atm_opts $ocean_opts $bed_opts $calv_opts \
+         $subgl_opts $basal_opts $stress_opts $skip_opts $output_opts"
+
+PISM_DO="$PISM_MPIDO $NN $PISM_EXEC"
+echo "### PISM options:"
+echo $PISM_DO $options
+
+cd $outdir
+$PISM_DO $options

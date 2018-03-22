@@ -5,7 +5,11 @@ import shutil
 import jinja2
 import settings
 
+def create_config_override(settings):
 
+    # read list of overrides from settings
+    # check their counterparts in the original pism_config.cdf
+    # write to pism_override.cdl
 
 def write_pism_script(settings):
 
@@ -25,7 +29,6 @@ def write_pism_script(settings):
     fname = os.path.join(experiment_dir, settings.script_name)
     with open(fname, 'w') as f: f.write(out)
 
-    # st = os.stat(fname)
     os.chmod(fname, os.stat(fname).st_mode | stat.S_IEXEC)
 
     print fname, "written."

@@ -38,5 +38,6 @@ def copy_config_override(settings):
     shutil.copy("templates/config_override.cdl",experiment_dir)
 
 if __name__ == "__main__":
+
     write_pism_script(settings)
     copy_config_override(settings)

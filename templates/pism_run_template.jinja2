@@ -32,7 +32,7 @@ if [ "$1" = "fetch" ]; then
 fi
 
 # set input files
-startfile=$input_data_dir/{{settings.startfile}}
+infile={{settings.infile}}
 atmfile=$input_data_dir/{{settings.atmfile}}
 oceanfile=$input_data_dir/{{settings.oceanfile}}
 
@@ -44,7 +44,7 @@ timestm=0:1:1000000
 snapstm=0:500:1000000
 
 extra_opts="-extra_file extra -extra_split -extra_times $extratm"
-ts_opts="-ts_times $timestm"
+ts_opts="-ts_times $timestm -ts_file timeseries.nc"
 snaps_opts="-save_file snapshots -save_times $snapstm -save_split -save_size medium"
 output_opts="$extra_opts $snaps_opts $ts_opts"
 
@@ -69,7 +69,13 @@ stress_opts="-pik -stress_balance ssa+sia -sia_e 2.0 \
 skip_opts="-skip -skip_max 10"
 
 # technical
-init_opts="-i $infile -ys $start -y $length"
+{% if settings.start_from_pism_file %}
+init_opts="-i $infile -ys $startyear -y $length"
+{% else %}
+grid="{{settings.grid}}"
+init_opts="-i $infile -bootstrap $grid -ys $startyear -y $length"
+{% endif %}
+
 run_opts="-config_override $outdir/config_override.nc -options_left \
           -o_format netcdf4_parallel"
 

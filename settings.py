@@ -1,6 +1,7 @@
 import os
 import pwd
 import grids
+
 # machine-dependent settings
 pism_experiments_dir = "/home/mengel/pism_experiments/"
 experiment = "pismpik_046_initmip16km_testing"
@@ -10,6 +11,11 @@ working_dir = "/p/tmp/mengel/pism_out"
 input_data_dir = "/p/projects/pism/mengel/pism_input/merged"
 pism_exec = "./bin/pismr"
 pism_mpi_do = "srun -n"
+
+pism_config_file = os.path.join(pismcode_dir,"github/src/pism_config.cdl")
+
+# override parameters that deviate from default.
+pism_override_params = {"ocean.pico.continental_shelf_depth": -900}
 
 startyear = 2000
 length = 100

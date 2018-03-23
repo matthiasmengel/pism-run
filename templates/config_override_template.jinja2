@@ -1,9 +1,12 @@
 netcdf config_overrride {
     variables:
     byte pism_overrides;
-
     {% for key, value in override_dict.items() -%}
-        pism_overrides:{{key}} = {{value}};
+        {% if value is string -%}
+            pism_overrides:{{key}} = "{{value}}";
+        {%- else -%}
+            pism_overrides:{{key}} = {{value}};
+        {%- endif %}
     {% endfor -%}
 }
 

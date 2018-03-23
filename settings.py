@@ -19,7 +19,7 @@ pism_config_file = os.path.join(pismcode_dir,"github/src/pism_config.cdl")
 pism_override_params = collections.OrderedDict([
 # "ocean.pico.continental_shelf_depth", -2000,
 ("stress_balance.sia.enhancement_factor",2.0),
-("stress_balance.model","sia+ssa"),
+("stress_balance.model","ssa+sia"),
 ("time_stepping.skip.enabled", "yes"),
 ("basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden", 0.04),
 ("basal_resistance.pseudo_plastic.q", 0.5),

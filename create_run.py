@@ -50,7 +50,7 @@ def get_pism_configs_to_override(settings, pism_override_params):
 
     for l in open(settings.pism_config_file,"r"):
         for k in pism_override_params:
-            if k in l:
+            if "pism_config:"+k == l:
                 key,val =  [s.strip() for s in l.split("=")]
                 override_dict[key.replace("pism_config:","")] = val.strip(";")
 
@@ -89,9 +89,10 @@ if __name__ == "__main__":
 
     write_pism_script(settings)
 
-    override_dict = get_pism_configs_to_override(settings,
-                       settings.pism_override_params)
-    override_dict = modify_pism_configs(override_dict, settings.pism_override_params)
-    write_override_config(settings, override_dict)
+    # override_dict = get_pism_configs_to_override(settings,
+    #                    settings.pism_override_params)
+    # override_dict = modify_pism_configs(override_dict, settings.pism_override_params)
+    # TODO: check if override params exist.
+    write_override_config(settings, settings.pism_override_params)
 
     copy_from_template(settings, "submit.sh")

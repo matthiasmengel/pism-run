@@ -15,7 +15,7 @@ outdir={{settings.working_dir}}/$runname
 # use only MPI if job is submitted
 if [ -n "${PISM_ON_CLUSTER:+1}" ]; then  # check if env var is set
   echo "This run was submitted, use MPI"
-  PISM_MPIDO={{settings.pism_mpi_do}}
+  PISM_MPIDO="{{settings.pism_mpi_do}}"
   NN="$1"
 else
   echo "This is interactive, skip use of MPI"

@@ -7,7 +7,7 @@ import collections
 import settings
 
 
-def write_pism_script(settings):
+def write_pism_script(settings, template_file):
 
     experiment_dir = os.path.join(settings.pism_experiments_dir,
                                   settings.experiment)
@@ -19,13 +19,15 @@ def write_pism_script(settings):
     jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(
         searchpath=os.path.join(settings.project_root,"templates")))
 
-    template = jinja_env.get_template("pism_run_template.jinja2")
+    template = jinja_env.get_template(template_file)
     out = template.render(settings=settings)
 
-    fname = os.path.join(experiment_dir, settings.script_name)
+    fname = os.path.join(experiment_dir,
+                         template_file.replace("_template.jinja2", ".sh"))
     with open(fname, 'w') as f: f.write(out)
 
-    os.chmod(fname, os.stat(fname).st_mode | stat.S_IEXEC)
+    if template_file == "pism_run_template.jinja2":
+        os.chmod(fname, os.stat(fname).st_mode | stat.S_IEXEC)
 
     print fname, "written."
 
@@ -87,7 +89,8 @@ def write_override_config(settings, override_dict):
 
 if __name__ == "__main__":
 
-    write_pism_script(settings)
+    write_pism_script(settings, "pism_run_template.jinja2")
+    write_pism_script(settings, "submit_template.jinja2")
 
     # override_dict = get_pism_configs_to_override(settings,
     #                    settings.pism_override_params)
@@ -95,4 +98,4 @@ if __name__ == "__main__":
     # TODO: check if override params exist.
     write_override_config(settings, settings.pism_override_params)
 
-    copy_from_template(settings, "submit.sh")
+    # copy_from_template(settings, "submit.sh")

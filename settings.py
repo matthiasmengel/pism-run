@@ -5,7 +5,6 @@ import grids
 
 # machine-dependent settings
 pism_experiments_dir = "/home/mengel/pism_experiments/"
-experiment = "pismpik_046_initmip16km_testing"
 script_name = "run_pism.sh"
 pismcode_dir = "/home/mengel/pism"
 working_dir = "/p/tmp/mengel/pism_out"
@@ -19,7 +18,7 @@ ocean_data_dir = "/p/tmp/mengel/pycmip5/p003_testing"
 pism_config_file = os.path.join(pismcode_dir,"github/src/pism_config.cdl")
 
 # override parameters that deviate from default.
-pism_override_params = collections.OrderedDict([
+override_params = collections.OrderedDict([
 # "ocean.pico.continental_shelf_depth", -2000,
 ("stress_balance.sia.enhancement_factor",2.0),
 ("stress_balance.model","ssa+sia"),
@@ -44,22 +43,24 @@ pism_override_params = collections.OrderedDict([
 startyear = 2000
 length = 100
 
-grid = grids.grids["initmip16km"]
+grid_id = "initmip8km"
+experiment = "pismpik_047_"+grid_id+"_testing"
+grid = grids.grids[grid_id]
 start_from_pism_file = False
 infile = os.path.join(input_data_dir,
-                      "bedmap2_albmap_racmo_wessem_tillphi_pism_initmip16km.nc")
+                      "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
 
 # infile = os.path.join(working_dir,"pismpik_044_initmip16km_1263_gfdlcm3rcp85",
 #                       "no_mass_tillphi.nc")
 
-atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_initmip16km.nc"
-oceanfile = "schmidtko_initmip16km.nc"
+atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
+oceanfile = os.path.join(input_data_dir,"schmidtko_"+grid_id+".nc")
 
 # earlier settings overwritten by iterables
 iterables = {"oceanfile":{
-"CSIRO-Mk3-6-0_rcp85":"thetao_Omon_CSIRO-Mk3-6-0_rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_CSIRO-Mk3-6-0_rcp85_r1i1p1_initmip16km_100km.nc",
-"GFDL-CM3_rcp85":"thetao_Omon_GFDL-CM3_rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_rcp85_r1i1p1_initmip16km_100km.nc",
-"IPSL-CM5A-LR_rcp85":"thetao_Omon_IPSL-CM5A-LR_rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_IPSL-CM5A-LR_rcp85_r1i1p1_initmip16km_100km.nc"
+"CSIRO-Mk3-6-0_rcp85":"thetao_Omon_CSIRO-Mk3-6-0_rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_CSIRO-Mk3-6-0_rcp85_r1i1p1_"+grid_id+"_100km.nc",
+"GFDL-CM3_rcp85":"thetao_Omon_GFDL-CM3_rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_rcp85_r1i1p1_"+grid_id+"_100km.nc",
+"IPSL-CM5A-LR_rcp85":"thetao_Omon_IPSL-CM5A-LR_rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_IPSL-CM5A-LR_rcp85_r1i1p1_"+grid_id+"_100km.nc"
 }}
 
 # no edits below this line needed.

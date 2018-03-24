@@ -24,10 +24,11 @@ def write_pism_script(settings, template_file,
     out = template.render(settings=settings)
 
     fname = os.path.join(experiment_dir,
-                         template_file.replace("_template.jinja2", ".sh"))
+                         template_file.replace(".jinja2",""))
+
     with open(fname, 'w') as f: f.write(out)
 
-    if template_file == "pism_run_template.jinja2":
+    if template_file == "pism_run.sh.jinja2":
         os.chmod(fname, os.stat(fname).st_mode | stat.S_IEXEC)
 
     print fname, "written."
@@ -46,37 +47,38 @@ def copy_from_template(settings, filename,
 
 
 
-def write_override_config(settings, override_dict,
-                          experiment=settings.experiment):
+# def write_override_config(settings, override_dict,
+#                           experiment=settings.experiment):
 
-    """ TODO: merge with write_pism_script """
+#     """ TODO: merge with write_pism_script """
 
-    experiment_dir = os.path.join(settings.pism_experiments_dir,
-                              experiment)
+#     experiment_dir = os.path.join(settings.pism_experiments_dir,
+#                               experiment)
 
-    # make jinja aware of templates
-    jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(
-        searchpath=os.path.join(settings.project_root,"templates")))
+#     # make jinja aware of templates
+#     jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(
+#         searchpath=os.path.join(settings.project_root,"templates")))
 
-    template = jinja_env.get_template("config_override_template.jinja2")
-    out = template.render(override_dict=override_dict)
+#     template = jinja_env.get_template("config_override_template.jinja2")
+#     out = template.render(override_dict=override_dict)
 
-    fname = os.path.join(experiment_dir, "config_override.cdl")
-    with open(fname, 'w') as f: f.write(out)
+#     fname = os.path.join(experiment_dir, "config_override.cdl")
+#     with open(fname, 'w') as f: f.write(out)
 
-    print fname, "written."
+#     print fname, "written."
 
 
 if __name__ == "__main__":
 
-    write_pism_script(settings, "pism_run_template.jinja2")
-    write_pism_script(settings, "submit_template.jinja2")
+    write_pism_script(settings, "pism_run.sh.jinja2")
+    write_pism_script(settings, "submit.sh.jinja2")
+    write_pism_script(settings, "config_override.cdl.jinja2")
 
     # override_dict = get_pism_configs_to_override(settings,
     #                    settings.pism_override_params)
     # override_dict = modify_pism_configs(override_dict, settings.pism_override_params)
     # TODO: check if override params exist.
-    write_override_config(settings, settings.pism_override_params)
+    # write_override_config(settings, settings.pism_override_params)
 
 
 

@@ -13,9 +13,9 @@ for key,its in settings.iterables.iteritems():
         experiment = settings.experiment+"_"+k
         print settings.oceanfile
         print experiment
-        cr.write_pism_script(settings, "pism_run_template.jinja2",
+        cr.write_pism_script(settings, "pism_run.sh.jinja2",
                           experiment=experiment)
-        cr.write_pism_script(settings, "submit_template.jinja2",
+        cr.write_pism_script(settings, "submit.sh.jinja2",
                           experiment=experiment)
-        cr.write_override_config(settings, settings.pism_override_params,
+        cr.write_pism_script(settings, "config_override.cdl.jinja2",
                               experiment=experiment)

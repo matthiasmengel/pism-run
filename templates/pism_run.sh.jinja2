@@ -23,18 +23,59 @@ else
 fi
 
 # get new pism code if fetch is argument
-if [ "$1" = "fetch" ]; then
-    mkdir -p $outdir/log/
-    # set parameters other than default ones.
-    ncgen3 config_override.cdl -o $outdir/config_override.nc
-    rsync -aCv $pismcode_dir/$code_version/bin/pismr $outdir/bin/
-fi
+# if [ "$1" = "fetch" ]; then
+mkdir -p $outdir/log/
+# set parameters other than default ones.
+ncgen3 config_override.cdl -o $outdir/config_override.nc
+rsync -aCv $pismcode_dir/$code_version/bin/pismr $outdir/bin/
+# fi
 
 # set input files
 infile={{settings.infile}}
 atmfile={{settings.atm_data_dir}}/{{settings.atmfile}}
-oceanfile={{settings.ocean_data_dir}}/{{settings.oceanfile}}
+oceanfile={{settings.oceanfile}}
 
+
+# boundary conditions
+atm_opts="-surface given -surface_given_file $atmfile"
+
+ocean_opts="{{settings.ocean_opts}}"
+
+grid="{{settings.grid}}"
+
+# technical
+run_opts="-config_override $outdir/config_override.nc -options_left \
+          -o_format netcdf4_parallel"
+
+PISM_DO="$PISM_MPIDO $NN $PISM_EXEC"
+
+{% if "smoothing_nomass" in settings.steps %}
+init_opts="-i $infile -bootstrap $grid"
+smooth_opts="-stress_balance sia -o smoothing.nc -ys 100000 -y 100"
+options="$init_opts $run_opts $atm_opts $ocean_opts $smooth_opts"
+echo "### smoothing options:"
+echo $PISM_DO $options
+cd $outdir
+$PISM_DO $options
+
+init_opts="-i smoothing.nc"
+nomass_opts="stress_balance none -o no_mass.nc -ye 200000"
+options="$init_opts $run_opts $atm_opts $ocean_opts $nomass_opts"
+echo "### no mass options:"
+echo $PISM_DO $options
+cd $outdir
+$PISM_DO $options
+{% endif %}
+
+# inputs
+{% if settings.start_from_pism_file %}
+init_opts="-i $infile -ys $startyear -y $length"
+{% else %}
+init_opts="-i $infile -bootstrap $grid -ys $startyear -y $length"
+{% endif %}
+
+
+{% if "full_physics" in settings.steps %}
 # time settings and output options
 startyear={{settings.startyear}}
 length={{settings.length}}
@@ -47,30 +88,10 @@ ts_opts="-ts_times $timestm -ts_file timeseries.nc"
 snaps_opts="-save_file snapshots -save_times $snapstm -save_split -save_size medium"
 output_opts="$extra_opts $snaps_opts $ts_opts"
 
-# boundary conditions
-atm_opts="-surface given -surface_given_file $atmfile"
-
-ocean_opts="-ocean cavity -ocean_cavity_file $oceanfile -gamma_T 1.0e-5 \
-            -overturning_coeff 0.5e6 \
-            -exclude_icerises -continental_shelf_depth -2000"
-
-# inputs
-{% if settings.start_from_pism_file %}
-init_opts="-i $infile -ys $startyear -y $length"
-{% else %}
-grid="{{settings.grid}}"
-init_opts="-i $infile -bootstrap $grid -ys $startyear -y $length"
-{% endif %}
-
-# technical
-run_opts="-config_override $outdir/config_override.nc -options_left \
-          -o_format netcdf4_parallel"
-
 options="$init_opts $run_opts $atm_opts $ocean_opts $output_opts"
-
-PISM_DO="$PISM_MPIDO $NN $PISM_EXEC"
 echo "### PISM options:"
 echo $PISM_DO $options
 
 cd $outdir
 $PISM_DO $options
+{% endif %}

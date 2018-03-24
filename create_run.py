@@ -41,31 +41,8 @@ def copy_from_template(settings, filename,
 
     experiment_dir = os.path.join(settings.pism_experiments_dir,
                                   experiment)
-
     shutil.copy(os.path.join("templates",filename), experiment_dir)
     print os.path.join(experiment_dir, filename), "copied."
-
-
-
-# def write_override_config(settings, override_dict,
-#                           experiment=settings.experiment):
-
-#     """ TODO: merge with write_pism_script """
-
-#     experiment_dir = os.path.join(settings.pism_experiments_dir,
-#                               experiment)
-
-#     # make jinja aware of templates
-#     jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(
-#         searchpath=os.path.join(settings.project_root,"templates")))
-
-#     template = jinja_env.get_template("config_override_template.jinja2")
-#     out = template.render(override_dict=override_dict)
-
-#     fname = os.path.join(experiment_dir, "config_override.cdl")
-#     with open(fname, 'w') as f: f.write(out)
-
-#     print fname, "written."
 
 
 if __name__ == "__main__":

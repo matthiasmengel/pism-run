@@ -5,7 +5,6 @@ import grids
 
 # machine-dependent settings
 pism_experiments_dir = "/home/mengel/pism_experiments/"
-script_name = "run_pism.sh"
 pismcode_dir = "/home/mengel/pism"
 working_dir = "/p/tmp/mengel/pism_out"
 pism_exec = "./bin/pismr"
@@ -13,7 +12,6 @@ pism_mpi_do = "srun -n"
 
 input_data_dir = "/p/projects/pism/mengel/pism_input/merged"
 atm_data_dir = "/p/projects/pism/mengel/pism_input/merged"
-ocean_data_dir = "/p/tmp/mengel/pycmip5/p003_testing"
 
 pism_config_file = os.path.join(pismcode_dir,"github/src/pism_config.cdl")
 
@@ -40,11 +38,15 @@ override_params = collections.OrderedDict([
 ("geometry.grounded_cell_fraction", "true"),
 ])
 
+
 startyear = 2000
 length = 100
-
 grid_id = "initmip8km"
-experiment = "pismpik_047_"+grid_id+"_testing"
+
+steps = ["smoothing_nomass","full_physics"]
+steps = ["smoothing_nomass"]
+
+experiment = "github_047_"+grid_id+"_testing3"
 grid = grids.grids[grid_id]
 start_from_pism_file = False
 infile = os.path.join(input_data_dir,
@@ -54,14 +56,25 @@ infile = os.path.join(input_data_dir,
 #                       "no_mass_tillphi.nc")
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
+
+ocean_opts = "-ocean pico -ocean_pico_file $oceanfile -gamma_T 1.0e-5 -overturning_coeff 0.5e6 -exclude_icerises -continental_shelf_depth -2000"
+
+# ocean_data_dir = ""
 oceanfile = os.path.join(input_data_dir,"schmidtko_"+grid_id+".nc")
 
+
+ocean_data_dir = "/p/tmp/mengel/pycmip5/p003_testing"
 # earlier settings overwritten by iterables
-iterables = {"oceanfile":{
-"CSIRO-Mk3-6-0_rcp85":"thetao_Omon_CSIRO-Mk3-6-0_rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_CSIRO-Mk3-6-0_rcp85_r1i1p1_"+grid_id+"_100km.nc",
-"GFDL-CM3_rcp85":"thetao_Omon_GFDL-CM3_rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_rcp85_r1i1p1_"+grid_id+"_100km.nc",
-"IPSL-CM5A-LR_rcp85":"thetao_Omon_IPSL-CM5A-LR_rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_IPSL-CM5A-LR_rcp85_r1i1p1_"+grid_id+"_100km.nc"
-}}
+
+
+its = ["CSIRO-Mk3-6-0_rcp85","GFDL-CM3_rcp85","IPSL-CM5A-LR_rcp85"]
+
+iterables = {}
+iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
+    "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
+    for k in its}
+
+iterables["oceanfile"].update({"base":oceanfile})
 
 # no edits below this line needed.
 project_root = os.path.dirname(os.path.abspath(__file__))

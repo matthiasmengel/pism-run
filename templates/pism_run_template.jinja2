@@ -3,7 +3,6 @@
 
 # variables depending on machine
 pismcode_dir={{settings.pismcode_dir}}
-input_data_dir={{settings.input_data_dir}}
 PISM_EXEC={{settings.pism_exec}}
 
 # variables depending on experiment name
@@ -33,8 +32,8 @@ fi
 
 # set input files
 infile={{settings.infile}}
-atmfile=$input_data_dir/{{settings.atmfile}}
-oceanfile=$input_data_dir/{{settings.oceanfile}}
+atmfile={{settings.atm_data_dir}}/{{settings.atmfile}}
+oceanfile={{settings.ocean_data_dir}}/{{settings.oceanfile}}
 
 # time settings and output options
 startyear={{settings.startyear}}

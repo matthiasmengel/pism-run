@@ -7,10 +7,11 @@ import collections
 import settings
 
 
-def write_pism_script(settings, template_file):
+def write_pism_script(settings, template_file,
+                      experiment=settings.experiment):
 
     experiment_dir = os.path.join(settings.pism_experiments_dir,
-                                  settings.experiment)
+                                  experiment)
 
     if not os.path.exists(experiment_dir):
         os.makedirs(experiment_dir)
@@ -32,47 +33,26 @@ def write_pism_script(settings, template_file):
     print fname, "written."
 
 
-def copy_from_template(settings, filename):
+def copy_from_template(settings, filename,
+                       experiment=settings.experiment):
 
     """ just a dummy for testing. nothing is modified. """
 
     experiment_dir = os.path.join(settings.pism_experiments_dir,
-                                  settings.experiment)
+                                  experiment)
 
     shutil.copy(os.path.join("templates",filename), experiment_dir)
     print os.path.join(experiment_dir, filename), "copied."
 
 
-def get_pism_configs_to_override(settings, pism_override_params):
 
-    """ find the configs in standard settings.pism_config_file that
-        that belong to each key in pism_override_params. """
+def write_override_config(settings, override_dict,
+                          experiment=settings.experiment):
 
-    override_dict = collections.OrderedDict()
-
-    for l in open(settings.pism_config_file,"r"):
-        for k in pism_override_params:
-            if "pism_config:"+k == l:
-                key,val =  [s.strip() for s in l.split("=")]
-                override_dict[key.replace("pism_config:","")] = val.strip(";")
-
-    return override_dict
-
-
-def modify_pism_configs(override_dict, pism_override_params):
-
-    """ modify override dictionary values as set in pism_override_params """
-
-    for k in pism_override_params:
-        override_dict[k] = pism_override_params[k]
-
-    return override_dict
-
-
-def write_override_config(settings, override_dict):
+    """ TODO: merge with write_pism_script """
 
     experiment_dir = os.path.join(settings.pism_experiments_dir,
-                              settings.experiment)
+                              experiment)
 
     # make jinja aware of templates
     jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(
@@ -98,4 +78,29 @@ if __name__ == "__main__":
     # TODO: check if override params exist.
     write_override_config(settings, settings.pism_override_params)
 
-    # copy_from_template(settings, "submit.sh")
+
+
+# def get_pism_configs_to_override(settings, pism_override_params):
+
+#     """ find the configs in standard settings.pism_config_file that
+#         that belong to each key in pism_override_params. """
+
+#     override_dict = collections.OrderedDict()
+
+#     for l in open(settings.pism_config_file,"r"):
+#         for k in pism_override_params:
+#             if "pism_config:"+k == l:
+#                 key,val =  [s.strip() for s in l.split("=")]
+#                 override_dict[key.replace("pism_config:","")] = val.strip(";")
+
+#     return override_dict
+
+
+# def modify_pism_configs(override_dict, pism_override_params):
+
+#     """ modify override dictionary values as set in pism_override_params """
+
+#     for k in pism_override_params:
+#         override_dict[k] = pism_override_params[k]
+
+#     return override_dict

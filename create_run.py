@@ -34,6 +34,30 @@ def write_pism_script(settings, template_file,
     print fname, "written."
 
 
+def get_pism_config_as_dict(settings):
+
+    """ find the configs in standard settings.pism_config_file """
+
+    pism_configs = {}
+
+    for l in open(settings.pism_config_file,"r"):
+
+        if "pism_config:" in l and "_doc" not in l:
+            key,val =  [s.strip() for s in l.split("=")]
+            pism_configs[key.replace("pism_config:","")] = val.strip(";")
+
+    return pism_configs
+
+
+def check_if_override_is_in_config(settings,pism_config_dict):
+
+    for k in settings.override_params:
+
+        if k not in pism_config_dict.keys():
+            raise ValueError(
+                '{} is not in {}'.format(k, settings.pism_config_file))
+
+
 def copy_from_template(settings, filename,
                        experiment=settings.experiment):
 
@@ -49,37 +73,7 @@ if __name__ == "__main__":
 
     write_pism_script(settings, "pism_run.sh.jinja2")
     write_pism_script(settings, "submit.sh.jinja2")
+
+    pism_config_dict = get_pism_config_as_dict(settings)
+    check_if_override_is_in_config(settings, pism_config_dict)
     write_pism_script(settings, "config_override.cdl.jinja2")
-
-    # override_dict = get_pism_configs_to_override(settings,
-    #                    settings.pism_override_params)
-    # override_dict = modify_pism_configs(override_dict, settings.pism_override_params)
-    # TODO: check if override params exist.
-    # write_override_config(settings, settings.pism_override_params)
-
-
-
-# def get_pism_configs_to_override(settings, pism_override_params):
-
-#     """ find the configs in standard settings.pism_config_file that
-#         that belong to each key in pism_override_params. """
-
-#     override_dict = collections.OrderedDict()
-
-#     for l in open(settings.pism_config_file,"r"):
-#         for k in pism_override_params:
-#             if "pism_config:"+k == l:
-#                 key,val =  [s.strip() for s in l.split("=")]
-#                 override_dict[key.replace("pism_config:","")] = val.strip(";")
-
-#     return override_dict
-
-
-# def modify_pism_configs(override_dict, pism_override_params):
-
-#     """ modify override dictionary values as set in pism_override_params """
-
-#     for k in pism_override_params:
-#         override_dict[k] = pism_override_params[k]
-
-#     return override_dict

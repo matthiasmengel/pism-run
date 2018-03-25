@@ -36,20 +36,18 @@ atmfile={{settings.atm_data_dir}}/{{settings.atmfile}}
 
 # boundary conditions
 atm_opts="-surface given -surface_given_file $atmfile"
-oceanfile={{settings.oceanfile}}
-ocean_opts="{{settings.ocean_opts}}"
 
 # technical
 run_opts="-config_override $outdir/config_override.nc -options_left \
           -o_format netcdf4_parallel"
 
 PISM_DO="$PISM_MPIDO $NN $PISM_EXEC"
+grid="{{settings.grid}}"
 
 {% if "smoothing_nomass" in settings.steps %}
-grid="{{settings.grid}}"
 init_opts="-i $bootstrapfile -bootstrap $grid"
-# ocean_opts="-ocean pik"
-smooth_opts="-stress_balance sia -o smoothing.nc -ys 100000 -y 100 \
+ocean_opts="-ocean pik"
+smooth_opts="-stress_balance sia -o smoothing.nc -ys 100000 -y 10 \
 -calving ocean_kill -ocean_kill_file $bootstrapfile"
 options="$init_opts $run_opts $atm_opts $ocean_opts $smooth_opts"
 echo "### smoothing options:"
@@ -82,15 +80,24 @@ ncks -A -v tillphi tillphi_tempfile.nc no_mass_tillphi.nc
 
 
 {% if "full_physics" in settings.steps %}
-# time settings and output options
+
+oceanfile={{settings.oceanfile}}
+ocean_opts="{{settings.ocean_opts}}"
+
+# inputs
+infile={{settings.infile}}
 startyear={{settings.startyear}}
 length={{settings.length}}
+{% if settings.start_from_pism_file %}
+init_opts="-i $infile -ys $startyear -y $length"
+{% else %}
+init_opts="-i $infile -bootstrap $grid -ys $startyear -y $length"
+{% endif %}
+
 extratm=0:50:1000000
 timestm=0:1:1000000
 snapstm=0:500:1000000
 
-infile={{settings.infile}}
-init_opts="-i $infile -ys $startyear -y $length"
 extra_opts="-extra_file extra -extra_split -extra_times $extratm"
 ts_opts="-ts_times $timestm -ts_file timeseries.nc"
 snaps_opts="-save_file snapshots -save_times $snapstm -save_split -save_size medium"

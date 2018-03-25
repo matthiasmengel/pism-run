@@ -25,14 +25,13 @@ override_params = collections.OrderedDict([
 ("basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden", 0.04),
 ("basal_resistance.pseudo_plastic.q", 0.5),
 # grounding line interpolations
-("geometry.grounded_cell_fraction", "true"),
 ("energy.basal_melt.use_grounded_cell_fraction", "false"),
 
 ("calving.methods", "eigen_calving,thickness_calving"),
 ("calving.eigen_calving.K", 1e17),
 ("calving.thickness_calving.threshold", 200),
 
-# the follwing are equivalent to command line option -pik
+# the following four options are equivalent to command line option -pik
 ("stress_balance.calving_front_stress_bc", "true"),
 ("geometry.part_grid.enabled", "true"),
 ("geometry.remove_icebergs", "true"),
@@ -43,23 +42,26 @@ override_params = collections.OrderedDict([
 startyear = 1850
 length = 450
 grid_id = "initmip4km"
-
+start_from_pism_file=False
 # steps = ["smoothing_nomass","full_physics"]
-# steps = ["smoothing_nomass"]
-steps = ["full_physics"]
+steps = ["smoothing_nomass"]
+# steps = ["full_physics"]
 
-experiment = "github_047_"+grid_id+"_testing6"
+experiment = "github_047_"+grid_id+"_nomass"
 grid = grids.grids[grid_id]
 
 bootstrapfile = os.path.join(input_data_dir,
                       "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
 infile = "no_mass_tillphi.nc"
-infile = os.path.join(working_dir,"github_047_initmip4km_testing5_4km",
+
+infile = os.path.join(working_dir,"github_047_initmip8km_testing5_8km",
                       "no_mass_tillphi.nc")
+
+infile = bootstrapfile
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 
-ocean_opts = "-ocean pico -ocean_pico_file $oceanfile -gamma_T 1.0e-5 -overturning_coeff 0.5e6 -exclude_icerises -continental_shelf_depth -2000"
+ocean_opts = "-ocean pico -ocean_pico_file $oceanfile -gamma_T 1.0e-5 -overturning_coeff 0.5e6 -exclude_icerises -continental_shelf_depth -800"
 
 # ocean_data_dir = ""
 oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means.nc")

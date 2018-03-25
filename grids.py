@@ -11,6 +11,7 @@ grids = {
     "5km":"-Mx 1200 -My 1200 -Lz 6000 -Lbz 2000 -Mz 201 -Mbz 51",
     # 2km grid: vertical resolution as from spinup.sh greenland-std example
     "2km":"-Mx 3000 -My 3000 -Lz 6000 -Lbz 2000 -Mz 501 -Mbz 41 -skip -skip_max 50",
+    "initmip4km":"-Mx 1521 -My 1521 -Lz 6000 -Lbz 2000 -Mz 221 -Mbz 61",
     "initmip8km":"-Mx 761 -My 761 -Lz 6000 -Lbz 2000 -Mz 121 -Mbz 31",
     "initmip16km":"-Mx 381 -My 381 -Lz 6000 -Lbz 2000 -Mz 81 -Mbz 21"
 }

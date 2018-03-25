@@ -31,17 +31,13 @@ rsync -aCv $pismcode_dir/$code_version/bin/pismr $outdir/bin/
 # fi
 
 # set input files
-infile={{settings.infile}}
+bootstrapfile={{settings.bootstrapfile}}
 atmfile={{settings.atm_data_dir}}/{{settings.atmfile}}
-oceanfile={{settings.oceanfile}}
-
 
 # boundary conditions
 atm_opts="-surface given -surface_given_file $atmfile"
-
+oceanfile={{settings.oceanfile}}
 ocean_opts="{{settings.ocean_opts}}"
-
-grid="{{settings.grid}}"
 
 # technical
 run_opts="-config_override $outdir/config_override.nc -options_left \
@@ -50,28 +46,38 @@ run_opts="-config_override $outdir/config_override.nc -options_left \
 PISM_DO="$PISM_MPIDO $NN $PISM_EXEC"
 
 {% if "smoothing_nomass" in settings.steps %}
-init_opts="-i $infile -bootstrap $grid"
-smooth_opts="-stress_balance sia -o smoothing.nc -ys 100000 -y 100"
+grid="{{settings.grid}}"
+init_opts="-i $bootstrapfile -bootstrap $grid"
+# ocean_opts="-ocean pik"
+smooth_opts="-stress_balance sia -o smoothing.nc -ys 100000 -y 100 \
+-calving ocean_kill -ocean_kill_file $bootstrapfile"
 options="$init_opts $run_opts $atm_opts $ocean_opts $smooth_opts"
 echo "### smoothing options:"
 echo $PISM_DO $options
 cd $outdir
 $PISM_DO $options
 
-init_opts="-i smoothing.nc"
-nomass_opts="stress_balance none -o no_mass.nc -ye 200000"
+# workaround: add tillphi to smoothing file
+ncks -O -6 -v tillphi $bootstrapfile tillphi_tempfile.nc
+ncap2 -O -s "lon_bnds=float(lon_bnds);lat_bnds=float(lat_bnds)" tillphi_tempfile.nc tillphi_tempfile.nc
+cp smoothing.nc smoothing_tillphi.nc
+ncks -A -v tillphi tillphi_tempfile.nc smoothing_tillphi.nc
+
+init_opts="-i smoothing_tillphi.nc"
+# ocean_opts="-ocean pik -calving ocean_kill -ocean_kill_file $bootstrapfile"
+nomass_opts="-no_mass -stress_balance none -o no_mass.nc -ys 100100 -ye 200000"
 options="$init_opts $run_opts $atm_opts $ocean_opts $nomass_opts"
+
 echo "### no mass options:"
 echo $PISM_DO $options
 cd $outdir
 $PISM_DO $options
-{% endif %}
 
-# inputs
-{% if settings.start_from_pism_file %}
-init_opts="-i $infile -ys $startyear -y $length"
-{% else %}
-init_opts="-i $infile -bootstrap $grid -ys $startyear -y $length"
+# workaround: add tillphi to no_mass file
+ncks -O -6 -v tillphi $bootstrapfile tillphi_tempfile.nc
+ncap2 -O -s "lon_bnds=float(lon_bnds);lat_bnds=float(lat_bnds)" tillphi_tempfile.nc tillphi_tempfile.nc
+cp no_mass.nc no_mass_tillphi.nc
+ncks -A -v tillphi tillphi_tempfile.nc no_mass_tillphi.nc
 {% endif %}
 
 
@@ -83,6 +89,8 @@ extratm=0:50:1000000
 timestm=0:1:1000000
 snapstm=0:500:1000000
 
+infile={{settings.infile}}
+init_opts="-i $infile -ys $startyear -y $length"
 extra_opts="-extra_file extra -extra_split -extra_times $extratm"
 ts_opts="-ts_times $timestm -ts_file timeseries.nc"
 snaps_opts="-save_file snapshots -save_times $snapstm -save_split -save_size medium"

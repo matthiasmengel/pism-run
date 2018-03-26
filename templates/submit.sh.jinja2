@@ -17,8 +17,9 @@ outdir={{settings.working_dir}}/$runname
 module purge
 module load pism/stable08_srunpetsc
 
+mkdir -p $outdir/log/
+
 # make the PISM execution script aware that it is on compute nodes.
 export PISM_ON_CLUSTER=1
-
 ./pism_run.sh $SLURM_NTASKS > $outdir/log/pism.out
 

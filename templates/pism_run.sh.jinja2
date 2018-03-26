@@ -38,32 +38,33 @@ atmfile={{settings.atm_data_dir}}/{{settings.atmfile}}
 atm_opts="-surface given -surface_given_file $atmfile"
 
 # technical
-run_opts="-config_override $outdir/config_override.nc -options_left \
+run_opts="-config_override config_override.nc -options_left \
           -o_format netcdf4_parallel"
 
 PISM_DO="$PISM_MPIDO $NN $PISM_EXEC"
 grid="{{settings.grid}}"
 
 {% if "smoothing_nomass" in settings.steps %}
-init_opts="-i $bootstrapfile -bootstrap $grid"
+
 ocean_opts="-ocean pik"
-smooth_opts="-stress_balance sia -o smoothing.nc -ys 100000 -y 10 \
--calving ocean_kill -ocean_kill_file $bootstrapfile"
-options="$init_opts $run_opts $atm_opts $ocean_opts $smooth_opts"
-echo "### smoothing options:"
-echo $PISM_DO $options
-cd $outdir
-$PISM_DO $options
+# init_opts="-i $bootstrapfile -bootstrap $grid"
+# smooth_opts="-stress_balance sia -o smoothing.nc -ys 100000 -y 10 \
+# -calving ocean_kill -ocean_kill_file $bootstrapfile"
+# options="$init_opts $run_opts $atm_opts $ocean_opts $smooth_opts"
+# echo "### smoothing options:"
+# echo $PISM_DO $options
+# cd $outdir
+# $PISM_DO $options
 
-# workaround: add tillphi to smoothing file
-ncks -O -6 -v tillphi $bootstrapfile tillphi_tempfile.nc
-ncap2 -O -s "lon_bnds=float(lon_bnds);lat_bnds=float(lat_bnds)" tillphi_tempfile.nc tillphi_tempfile.nc
-cp smoothing.nc smoothing_tillphi.nc
-ncks -A -v tillphi tillphi_tempfile.nc smoothing_tillphi.nc
+# # workaround: add tillphi to smoothing file
+# ncks -O -6 -v tillphi $bootstrapfile tillphi_tempfile.nc
+# ncap2 -O -s "lon_bnds=float(lon_bnds);lat_bnds=float(lat_bnds)" tillphi_tempfile.nc tillphi_tempfile.nc
+# cp smoothing.nc smoothing_tillphi.nc
+# ncks -A -v tillphi tillphi_tempfile.nc smoothing_tillphi.nc
 
-init_opts="-i smoothing_tillphi.nc"
+# init_opts="-i smoothing_tillphi.nc"
 # ocean_opts="-ocean pik -calving ocean_kill -ocean_kill_file $bootstrapfile"
-nomass_opts="-no_mass -stress_balance none -o no_mass.nc -ys 100100 -ye 200000"
+nomass_opts="-no_mass -stress_balance none -o no_mass.nc -ys 100000 -ye 200000"
 options="$init_opts $run_opts $atm_opts $ocean_opts $nomass_opts"
 
 echo "### no mass options:"
@@ -88,10 +89,10 @@ ocean_opts="{{settings.ocean_opts}}"
 infile={{settings.infile}}
 startyear={{settings.startyear}}
 length={{settings.length}}
-{% if settings.start_from_pism_file %}
-init_opts="-i $infile -ys $startyear -y $length"
-{% else %}
+{% if settings.bootstrappinig %}
 init_opts="-i $infile -bootstrap $grid -ys $startyear -y $length"
+{% else %}
+init_opts="-i $infile -ys $startyear -y $length"
 {% endif %}
 
 extratm=0:50:1000000
@@ -101,7 +102,7 @@ snapstm=0:500:1000000
 extra_opts="-extra_file extra -extra_split -extra_times $extratm"
 ts_opts="-ts_times $timestm -ts_file timeseries.nc"
 snaps_opts="-save_file snapshots -save_times $snapstm -save_split -save_size medium"
-output_opts="$extra_opts $snaps_opts $ts_opts"
+output_opts="$extra_opts $snaps_opts $ts_opts -o out.nc"
 
 options="$init_opts $run_opts $atm_opts $ocean_opts $output_opts"
 echo "### PISM options:"

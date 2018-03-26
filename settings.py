@@ -24,6 +24,12 @@ override_params = collections.OrderedDict([
 ("time_stepping.skip.enabled", "yes"),
 ("basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden", 0.04),
 ("basal_resistance.pseudo_plastic.q", 0.5),
+("basal_yield_stress.mohr_coulomb.topg_to_phi.enabled",  "yes"),
+# ("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_min", 5.0),
+# ("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_max", 15.0),
+# ("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_min", -1000.0),
+# ("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_max", 1000.0),
+
 # grounding line interpolations
 ("energy.basal_melt.use_grounded_cell_fraction", "false"),
 
@@ -32,6 +38,7 @@ override_params = collections.OrderedDict([
 ("calving.thickness_calving.threshold", 200),
 
 # the following four options are equivalent to command line option -pik
+# if all set to true
 ("stress_balance.calving_front_stress_bc", "true"),
 ("geometry.part_grid.enabled", "true"),
 ("geometry.remove_icebergs", "true"),
@@ -42,22 +49,22 @@ override_params = collections.OrderedDict([
 startyear = 1850
 length = 450
 grid_id = "initmip4km"
-start_from_pism_file=False
+boostrapping=False
 # steps = ["smoothing_nomass","full_physics"]
 steps = ["smoothing_nomass"]
-# steps = ["full_physics"]
+steps = ["full_physics"]
 
-experiment = "github_047_"+grid_id+"_nomass"
+experiment = "github_047_"+grid_id+"_testing8"
 grid = grids.grids[grid_id]
 
 bootstrapfile = os.path.join(input_data_dir,
                       "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
 infile = "no_mass_tillphi.nc"
 
-infile = os.path.join(working_dir,"github_047_initmip8km_testing5_8km",
+infile = os.path.join(working_dir,"github_047_initmip4km_nomass2_nosmoo",
                       "no_mass_tillphi.nc")
 
-infile = bootstrapfile
+# infile = bootstrapfile
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 

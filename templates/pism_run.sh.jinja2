@@ -36,6 +36,8 @@ atmfile={{settings.atm_data_dir}}/{{settings.atmfile}}
 
 # boundary conditions
 atm_opts="-surface given -surface_given_file $atmfile"
+oceanfile={{settings.oceanfile}}
+ocean_opts="{{settings.ocean_opts}}"
 
 # technical
 run_opts="-config_override config_override.nc -options_left \
@@ -46,24 +48,7 @@ grid="{{settings.grid}}"
 
 {% if "smoothing_nomass" in settings.steps %}
 
-ocean_opts="-ocean pik"
-# init_opts="-i $bootstrapfile -bootstrap $grid"
-# smooth_opts="-stress_balance sia -o smoothing.nc -ys 100000 -y 10 \
-# -calving ocean_kill -ocean_kill_file $bootstrapfile"
-# options="$init_opts $run_opts $atm_opts $ocean_opts $smooth_opts"
-# echo "### smoothing options:"
-# echo $PISM_DO $options
-# cd $outdir
-# $PISM_DO $options
-
-# # workaround: add tillphi to smoothing file
-# ncks -O -6 -v tillphi $bootstrapfile tillphi_tempfile.nc
-# ncap2 -O -s "lon_bnds=float(lon_bnds);lat_bnds=float(lat_bnds)" tillphi_tempfile.nc tillphi_tempfile.nc
-# cp smoothing.nc smoothing_tillphi.nc
-# ncks -A -v tillphi tillphi_tempfile.nc smoothing_tillphi.nc
-
-# init_opts="-i smoothing_tillphi.nc"
-# ocean_opts="-ocean pik -calving ocean_kill -ocean_kill_file $bootstrapfile"
+init_opts="-i $bootstrapfile -bootstrap $grid"
 nomass_opts="-no_mass -stress_balance none -o no_mass.nc -ys 100000 -ye 200000"
 options="$init_opts $run_opts $atm_opts $ocean_opts $nomass_opts"
 
@@ -81,9 +66,6 @@ ncks -A -v tillphi tillphi_tempfile.nc no_mass_tillphi.nc
 
 
 {% if "full_physics" in settings.steps %}
-
-oceanfile={{settings.oceanfile}}
-ocean_opts="{{settings.ocean_opts}}"
 
 # inputs
 infile={{settings.infile}}
@@ -103,8 +85,9 @@ extra_opts="-extra_file extra -extra_split -extra_times $extratm"
 ts_opts="-ts_times $timestm -ts_file timeseries.nc"
 snaps_opts="-save_file snapshots -save_times $snapstm -save_split -save_size medium"
 output_opts="$extra_opts $snaps_opts $ts_opts -o out.nc"
+physics_opts="-topg_to_phi 5,15,-1000,1000"
 
-options="$init_opts $run_opts $atm_opts $ocean_opts $output_opts"
+options="$init_opts $run_opts $atm_opts $ocean_opts $output_opts $physics_opts"
 echo "### PISM options:"
 echo $PISM_DO $options
 

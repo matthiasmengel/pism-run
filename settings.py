@@ -9,12 +9,13 @@ pismcode_dir = "/home/mengel/pism"
 working_dir = "/p/tmp/mengel/pism_out"
 pism_exec = "./bin/pismr"
 pism_mpi_do = "srun -n"
+pik_partition="broadwell"
 
 input_data_dir = "/p/projects/pism/mengel/pism_input/merged"
 atm_data_dir = "/p/projects/pism/mengel/pism_input/merged"
 ocn_data_dir = "/p/projects/pism/mengel/pism_input/schmidtko"
 
-pism_config_file = os.path.join(pismcode_dir,"github/src/pism_config.cdl")
+pism_config_file = os.path.join(pismcode_dir,"picobw/src/pism_config.cdl")
 
 # override parameters that deviate from default.
 override_params = collections.OrderedDict([
@@ -50,19 +51,19 @@ startyear = 1850
 length = 450
 grid_id = "initmip4km"
 boostrapping=False
-# steps = ["smoothing_nomass","full_physics"]
-steps = ["smoothing_nomass"]
-steps = ["full_physics"]
+steps = ["smoothing_nomass","full_physics"]
+# steps = ["smoothing_nomass"]
+# steps = ["full_physics"]
 
-experiment = "github_047_"+grid_id+"_testing8"
+experiment = "picobw_050_"+grid_id+"_testing1"
 grid = grids.grids[grid_id]
 
 bootstrapfile = os.path.join(input_data_dir,
                       "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
-infile = "no_mass_tillphi.nc"
+infile = "no_mass.nc"
 
-infile = os.path.join(working_dir,"github_047_initmip4km_nomass2_nosmoo",
-                      "no_mass_tillphi.nc")
+# infile = os.path.join(working_dir,"github_047_initmip4km_nomass2_nosmoo",
+#                       "no_mass_tillphi.nc")
 
 # infile = bootstrapfile
 

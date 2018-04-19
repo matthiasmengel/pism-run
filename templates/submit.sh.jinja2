@@ -2,20 +2,26 @@
 
 #SBATCH --qos=short
 #SBATCH --time=0-23:50:00
-#SBATCH --job-name=pism
+#SBATCH --job-name={{settings.experiment}}
 #SBATCH --account=ice
 #SBATCH --output=./slurm_out.out
 #SBATCH --error=./slurm_error.err
 #SBATCH --ntasks=128
-#SBATCH --tasks-per-node=16
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=mengel@pik-potsdam.de
+{% if settings.pik_partition=="broadwell" -%}
+#SBATCH --tasks-per-node=32
+#SBATCH --partition=broadwell
+module purge
+module load pism/stable1.0_broadwell
+{% else %}
+#SBATCH --tasks-per-node=16
+module purge
+module load pism/stable08_srunpetsc
+{% endif %}
 
 runname=`echo $PWD | awk -F/ '{print $NF}'`
 outdir={{settings.working_dir}}/$runname
-
-module purge
-module load pism/stable08_srunpetsc
 
 mkdir -p $outdir/log/
 

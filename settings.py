@@ -44,6 +44,8 @@ override_params = collections.OrderedDict([
 ("geometry.part_grid.enabled", "true"),
 ("geometry.remove_icebergs", "true"),
 ("geometry.grounded_cell_fraction", "true"),
+
+("ocean.pico.exclude_ice_rises", "yes"),
 ])
 
 
@@ -53,23 +55,23 @@ grid_id = "initmip4km"
 boostrapping=False
 steps = ["smoothing_nomass","full_physics"]
 # steps = ["smoothing_nomass"]
-# steps = ["full_physics"]
+steps = ["full_physics"]
 
-experiment = "picobw_050_"+grid_id+"_testing1"
+experiment = "picobw_050_"+grid_id+"_testing3"
 grid = grids.grids[grid_id]
 
 bootstrapfile = os.path.join(input_data_dir,
                       "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
-infile = "no_mass.nc"
+# infile = "no_mass.nc"
 
-# infile = os.path.join(working_dir,"github_047_initmip4km_nomass2_nosmoo",
-#                       "no_mass_tillphi.nc")
+infile = os.path.join(working_dir,"picobw_050_initmip4km_testing1",
+                      "no_mass.nc")
 
 # infile = bootstrapfile
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 
-ocean_opts = "-ocean pico -ocean_pico_file $oceanfile -gamma_T 1.0e-5 -overturning_coeff 0.5e6 -exclude_icerises -continental_shelf_depth -800"
+ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"
 
 # ocean_data_dir = ""
 oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means.nc")
@@ -79,9 +81,13 @@ ocean_data_dir = "/p/tmp/mengel/pycmip5/p003_testing"
 its = ["CSIRO-Mk3-6-0_historical+rcp85","GFDL-CM3_historical+rcp85","IPSL-CM5A-LR_historical+rcp85"]
 
 iterables = {}
-iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
-    "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
-    for k in its}
+# iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
+#     "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
+#     for k in its}
+
+param_iterables = {}
+param_iterables["ocean.pico.overturning_coefficent"] = [1e5,2e5,5e5]
+param_iterables["ocean.pico.heat_exchange_coefficent"] = [5e-6,1e-5,5e-5]
 
 # iterables["oceanfile"].update({"base":oceanfile})
 

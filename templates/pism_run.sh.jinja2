@@ -64,9 +64,7 @@ cp no_mass.nc no_mass_tillphi.nc
 ncks -A -v tillphi tillphi_tempfile.nc no_mass_tillphi.nc
 {% endif %}
 
-
 {% if "full_physics" in settings.steps %}
-
 # inputs
 infile={{settings.infile}}
 startyear={{settings.startyear}}
@@ -77,9 +75,9 @@ init_opts="-i $infile -bootstrap $grid -ys $startyear -y $length"
 init_opts="-i $infile -ys $startyear -y $length"
 {% endif %}
 
-extratm=0:50:1000000
+extratm=0:20:1000000
 timestm=0:1:1000000
-snapstm=0:500:1000000
+snapstm=0:50:1000000
 
 extra_opts="-extra_file extra -extra_split -extra_times $extratm"
 ts_opts="-ts_times $timestm -ts_file timeseries.nc"

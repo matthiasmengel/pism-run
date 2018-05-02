@@ -6,7 +6,7 @@
 #SBATCH --account=ice
 #SBATCH --output=./slurm_out.out
 #SBATCH --error=./slurm_error.err
-#SBATCH --ntasks=128
+#SBATCH --ntasks=160
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=mengel@pik-potsdam.de
 {% if settings.pik_partition=="broadwell" -%}

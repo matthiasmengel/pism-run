@@ -66,26 +66,35 @@ ncks -A -v tillphi tillphi_tempfile.nc no_mass_tillphi.nc
 
 {% if "full_physics" in settings.steps %}
 # inputs
-infile={{settings.infile}}
 startyear={{settings.startyear}}
 length={{settings.length}}
+
+infile={{settings.infile}}
+restart_file=snapshots_restart_2150.000.nc
+
 {% if settings.bootstrappinig %}
 init_opts="-i $infile -bootstrap $grid -ys $startyear -y $length"
 {% else %}
-init_opts="-i $infile -ys $startyear -y $length"
+restart=false
+if $restart ; then
+  init_opts="-i $restart_file -ye $((startyear+length))"
+else
+  init_opts="-i $infile -ys $startyear -y $length"
+fi
 {% endif %}
 
 extratm=0:20:1000000
 timestm=0:1:1000000
 snapstm=0:50:1000000
 
-extra_opts="-extra_file extra -extra_split -extra_times $extratm"
+extra_vars="mask,thk,velsurf_mag,velbase_mag,flux_mag,tillwat,tauc,pico_overturning,pico_temperature_box0,\
+pico_salinity_box0,tillphi,shelfbmassflux,shelfbtemp,basins,bmelt"
+extra_opts="-extra_file extra -extra_split -extra_times $extratm -extra_vars $extra_vars"
 ts_opts="-ts_times $timestm -ts_file timeseries.nc"
 snaps_opts="-save_file snapshots -save_times $snapstm -save_split -save_size medium"
 output_opts="$extra_opts $snaps_opts $ts_opts -o out.nc"
-physics_opts="-topg_to_phi 5,15,-1000,1000"
 
-options="$init_opts $run_opts $atm_opts $ocean_opts $output_opts $physics_opts"
+options="$init_opts $run_opts $atm_opts $ocean_opts $output_opts"
 echo "### PISM options:"
 echo $PISM_DO $options
 

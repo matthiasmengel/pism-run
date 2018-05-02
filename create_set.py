@@ -38,6 +38,9 @@ for k in iterables.keys():
     for i,v in enumerate(iterables[k].keys()):
         ensemble_table.loc[ensemble_table[k] == v,k+"_value"] = iterables[k][v]
 
+
+# FIXME: check if all params all override params are in config.
+
 # bring ensemble table entries to settings and write experiments
 for ind in ensemble_table.index:
 
@@ -49,16 +52,21 @@ for ind in ensemble_table.index:
             settings.__dict__[col] = ensemble_table.loc[ind,col+"_value"]
 
     experiment = settings.experiment+"_"+ind
+
     cr.write_pism_script(settings, "pism_run.sh.jinja2",
                       experiment=experiment)
     cr.write_pism_script(settings, "submit.sh.jinja2",
                       experiment=experiment)
     cr.write_pism_script(settings, "config_override.cdl.jinja2",
                           experiment=experiment)
+    cr.write_pism_script(settings, "prepare_restart.sh.jinja2",
+                          experiment=experiment)
+
 
 ensemble_table.to_csv(os.path.join("sets",settings.experiment+".txt"),
                       sep=" ", index_label="hash")
 print "Wrote ensemble table to", os.path.join("sets",settings.experiment+".txt")
+
 # experiments = []
 
 # # for key,its in settings.iterables.iteritems():

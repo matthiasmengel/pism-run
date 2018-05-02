@@ -73,6 +73,7 @@ if __name__ == "__main__":
 
     write_pism_script(settings, "pism_run.sh.jinja2")
     write_pism_script(settings, "submit.sh.jinja2")
+    write_pism_script(settings, "prepare_restart.sh.jinja2")
 
     pism_config_dict = get_pism_config_as_dict(settings)
     check_if_override_is_in_config(settings, pism_config_dict)

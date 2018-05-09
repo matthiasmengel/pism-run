@@ -55,20 +55,21 @@ length = 450
 grid_id = "initmip4km"
 boostrapping=False
 # steps = ["smoothing_nomass","full_physics"]
-# steps = ["smoothing_nomass"]
+# steps = ["nomass"]
 steps = ["full_physics"]
 
-experiment = "picobw_052_"+grid_id+"_testing_tillphi"
+experiment = "picobw_052_"+grid_id+"_testing_tillphi_tw"
 grid = grids.grids[grid_id]
 
 bootstrapfile = os.path.join(input_data_dir,
                       "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
 # infile = "no_mass.nc"
 
-infile = os.path.join(working_dir,"picobw_050_initmip4km_testing1",
+infile_smoothing = os.path.join(working_dir,"picobw_050_initmip4km_testing1",
                       "no_mass_tillphi.nc")
 
 # infile = bootstrapfile
+infile_full_physics = "/p/tmp/mengel/pism_out/picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc"
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"
@@ -89,7 +90,7 @@ param_iterables = {}
 # param_iterables["ocean.pico.overturning_coefficent"] = [1e5,2e5,5e5]
 # param_iterables["ocean.pico.heat_exchange_coefficent"] = [5e-6,1e-5,5e-5]
 
-iterables["oceanfile"].update({"base":oceanfile})
+# iterables["oceanfile"].update({"base":oceanfile})
 
 # no edits below this line needed.
 project_root = os.path.dirname(os.path.abspath(__file__))

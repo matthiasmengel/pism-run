@@ -46,7 +46,7 @@ run_opts="-config_override config_override.nc -options_left \
 PISM_DO="$PISM_MPIDO $NN $PISM_EXEC"
 grid="{{settings.grid}}"
 
-{% if "smoothing_nomass" in settings.steps %}
+{% if "nomass" in settings.steps %}
 
 init_opts="-i $bootstrapfile -bootstrap $grid"
 nomass_opts="-no_mass -stress_balance none -o no_mass.nc -ys 100000 -ye 200000"
@@ -64,12 +64,36 @@ cp no_mass.nc no_mass_tillphi.nc
 ncks -A -v tillphi tillphi_tempfile.nc no_mass_tillphi.nc
 {% endif %}
 
+{% if "smoothing" in settings.steps %}
+
+infile={{settings.infile_smoothing}}
+init_opts="-i $infile $startyear -y 1"
+smoothing_opts="-stress_balance sia -o smoothing.nc"
+options="$init_opts $run_opts $atm_opts $ocean_opts $smoothing_opts"
+
+echo "### smoothing options:"
+echo $PISM_DO $options
+cd $outdir
+$PISM_DO $options
+
+# workaround: add tillphi to smoothing file
+ncks -O -6 -v tillphi $bootstrapfile tillphi_tempfile.nc
+ncap2 -O -s "lon_bnds=float(lon_bnds);lat_bnds=float(lat_bnds)" tillphi_tempfile.nc tillphi_tempfile.nc
+cp smoothing.nc smoothing_tillphi.nc
+ncks -A -v tillphi tillphi_tempfile.nc smoothing_tillphi.nc
+{% endif %}
+
+
 {% if "full_physics" in settings.steps %}
 # inputs
 startyear={{settings.startyear}}
 length={{settings.length}}
 
-infile={{settings.infile}}
+infile={{settings.infile_full_physics}}
+# cd $outdir
+# cp {{settings.infile_smoothing}} $infile
+# workaround to avoid KSP error at startup
+# ncap2 -O -s 'tillwat=tillwat*0.95' $infile $infile
 restart_file=snapshots_restart_2150.000.nc
 
 {% if settings.bootstrappinig %}

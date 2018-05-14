@@ -2,21 +2,26 @@ import os
 import pwd
 import collections
 import grids
+import pwd
+username = pwd.getpwuid(os.getuid()).pw_name
 
-# machine-dependent settings
-pism_experiments_dir = "/home/mengel/pism_experiments/"
-pismcode_dir = "/home/mengel/pism"
-working_dir = "/p/tmp/mengel/pism_out"
-pism_exec = "./bin/pismr"
-pism_mpi_do = "srun -n"
-pik_partition="broadwell"
-submit_command="sbatch submit.sh"
+if username=="mengel":
+    from pikcluster_settings import *
+else:
+    from supermuc_settings import *
 
-input_data_dir = "/p/projects/pism/mengel/pism_input/merged"
-atm_data_dir = "/p/projects/pism/mengel/pism_input/merged"
-ocn_data_dir = "/p/projects/pism/mengel/pism_input/schmidtko"
+code_version = "picotest"
+grid_id = "initmip4km"
+experiment = code_version+"_052_"+grid_id+"_testing_tillphi_tw"
 
-pism_config_file = os.path.join(pismcode_dir,"picobw/src/pism_config.cdl")
+pism_experiments_dir = os.path.join(home_dir,"pism_experiments")
+pismcode_dir = os.path.join(home_dir,"pism")
+
+input_data_dir = os.path.join(input_root_dir,"merged")
+atm_data_dir = os.path.join(input_root_dir,"merged")
+ocn_data_dir = os.path.join(input_root_dir,"schmidtko")
+
+pism_config_file = os.path.join(pismcode_dir,code_version,"src/pism_config.cdl")
 
 # override parameters that deviate from default.
 override_params = collections.OrderedDict([
@@ -52,13 +57,11 @@ override_params = collections.OrderedDict([
 
 startyear = 1850
 length = 450
-grid_id = "initmip4km"
 boostrapping=False
 # steps = ["smoothing_nomass","full_physics"]
 # steps = ["nomass"]
 steps = ["full_physics"]
 
-experiment = "picobw_052_"+grid_id+"_testing_tillphi_tw"
 grid = grids.grids[grid_id]
 
 bootstrapfile = os.path.join(input_data_dir,
@@ -69,7 +72,7 @@ infile_smoothing = os.path.join(working_dir,"picobw_050_initmip4km_testing1",
                       "no_mass_tillphi.nc")
 
 # infile = bootstrapfile
-infile_full_physics = "/p/tmp/mengel/pism_out/picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc"
+infile_full_physics = os.path.join(working_dir,"picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc")
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"

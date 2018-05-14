@@ -8,7 +8,8 @@ import settings
 
 
 def write_pism_script(settings, template_file,
-                      experiment=settings.experiment):
+                      experiment=settings.experiment,
+                      printe=False):
 
     experiment_dir = os.path.join(settings.pism_experiments_dir,
                                   experiment)
@@ -30,6 +31,9 @@ def write_pism_script(settings, template_file,
 
     if template_file == "pism_run.sh.jinja2":
         os.chmod(fname, os.stat(fname).st_mode | stat.S_IEXEC)
+
+    if printe:
+        print "##", experiment_dir
 
     print fname, "written."
 
@@ -71,7 +75,7 @@ def copy_from_template(settings, filename,
 
 if __name__ == "__main__":
 
-    write_pism_script(settings, "pism_run.sh.jinja2")
+    write_pism_script(settings, "pism_run.sh.jinja2",printe=True)
     write_pism_script(settings, "submit.sh.jinja2")
     write_pism_script(settings, "prepare_restart.sh.jinja2")
 

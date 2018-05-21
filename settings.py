@@ -93,7 +93,7 @@ iterables = {}
 #    for k in its}
 
 param_iterables = {}
-param_iterables["stress_balance.sia.enhancement_factor"] = [0.8,1.0]
+param_iterables["stress_balance.ssa.enhancement_factor"] = [0.8,1.0]
 param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.02,0.04]
 param_iterables["basal_resistance.pseudo_plastic.q"] = [0.5,0.75]
 param_iterables["ocean.pico.overturning_coefficent"] = [5e5,1e6]

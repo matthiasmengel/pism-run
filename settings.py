@@ -3,16 +3,19 @@ import pwd
 import collections
 import grids
 import pwd
+
 username = pwd.getpwuid(os.getuid()).pw_name
 
+is_pikcluster = False
 if username=="mengel":
+    is_pikcluster = True
     from pikcluster_settings import *
 else:
     from supermuc_settings import *
 
-code_version = "picotest"
-grid_id = "initmip4km"
-experiment = code_version+"_052_"+grid_id+"_testing_tillphi_tw"
+code_version = "opttphi"
+grid_id = "initmip16km"
+experiment = code_version+"_053_"+grid_id+"_trytilloptimize"
 
 pism_experiments_dir = os.path.join(home_dir,"pism_experiments")
 pismcode_dir = os.path.join(home_dir,"pism")
@@ -59,8 +62,8 @@ startyear = 1850
 length = 450
 boostrapping=False
 # steps = ["smoothing_nomass","full_physics"]
-# steps = ["nomass"]
-steps = ["full_physics"]
+steps = []
+steps = ["nomass","full_physics"]
 
 grid = grids.grids[grid_id]
 

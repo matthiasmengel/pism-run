@@ -36,8 +36,6 @@ atmfile={{settings.atm_data_dir}}/{{settings.atmfile}}
 
 # boundary conditions
 atm_opts="-surface given -surface_given_file $atmfile"
-oceanfile={{settings.oceanfile}}
-ocean_opts="{{settings.ocean_opts}}"
 
 # technical
 run_opts="-config_override config_override.nc -options_left \
@@ -50,7 +48,7 @@ grid="{{settings.grid}}"
 
 init_opts="-i $bootstrapfile -bootstrap $grid"
 nomass_opts="-no_mass -stress_balance none -o no_mass.nc -ys 100000 -ye 200000"
-options="$init_opts $run_opts $atm_opts $ocean_opts $nomass_opts"
+options="$init_opts $run_opts $atm_opts $nomass_opts"
 
 echo "### no mass options:"
 echo $PISM_DO $options
@@ -69,7 +67,7 @@ ncks -A -v tillphi tillphi_tempfile.nc no_mass_tillphi.nc
 infile={{settings.infile_smoothing}}
 init_opts="-i $infile $startyear -y 1"
 smoothing_opts="-stress_balance sia -o smoothing.nc"
-options="$init_opts $run_opts $atm_opts $ocean_opts $smoothing_opts"
+options="$init_opts $run_opts $atm_opts $smoothing_opts"
 
 echo "### smoothing options:"
 echo $PISM_DO $options
@@ -85,6 +83,9 @@ ncks -A -v tillphi tillphi_tempfile.nc smoothing_tillphi.nc
 
 
 {% if "full_physics" in settings.steps %}
+oceanfile={{settings.oceanfile}}
+ocean_opts="{{settings.ocean_opts}}"
+
 # inputs
 startyear={{settings.startyear}}
 length={{settings.length}}

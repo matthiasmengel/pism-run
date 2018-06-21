@@ -14,8 +14,8 @@ else:
     from supermuc_settings import *
 
 code_version = "opttphi"
-grid_id = "initmip16km"
-experiment = code_version+"_053_"+grid_id+"_trytilloptimize"
+grid_id = "initmip4km"
+experiment = code_version+"_056_"+grid_id+"_nomassoceanconst"
 
 pism_experiments_dir = os.path.join(home_dir,"pism_experiments")
 pismcode_dir = os.path.join(home_dir,"pism")
@@ -29,11 +29,11 @@ pism_config_file = os.path.join(pismcode_dir,code_version,"src/pism_config.cdl")
 # override parameters that deviate from default.
 override_params = collections.OrderedDict([
 # "ocean.pico.continental_shelf_depth", -2000,
-("stress_balance.sia.enhancement_factor",2.0),
+("stress_balance.sia.enhancement_factor",1.0),
 ("stress_balance.model","ssa+sia"),
 ("time_stepping.skip.enabled", "yes"),
-("basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden", 0.04),
-("basal_resistance.pseudo_plastic.q", 0.5),
+("basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden", 0.03),
+("basal_resistance.pseudo_plastic.q", 0.75),
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.enabled",  "no"),
 # ("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_min", 5.0),
 # ("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_max", 15.0),
@@ -59,7 +59,7 @@ override_params = collections.OrderedDict([
 
 
 startyear = 1850
-length = 450
+length = 1000
 boostrapping=False
 # steps = ["smoothing_nomass","full_physics"]
 steps = []
@@ -75,7 +75,8 @@ infile_smoothing = os.path.join(working_dir,"picobw_050_initmip4km_testing1",
                       "no_mass_tillphi.nc")
 
 # infile = bootstrapfile
-infile_full_physics = os.path.join(working_dir,"picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc")
+# infile_full_physics = os.path.join(working_dir,"picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc")
+infile_full_physics = "nomass.nc"
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"

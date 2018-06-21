@@ -2,7 +2,8 @@
 
 home_dir = "/home/hpc/pr94ga/di36lav"
 working_dir = "/gss/scratch/pr94ga/di36lav/pism_out"
-input_root_dir = "/gpfs/work/pr94ga/di36lav/"
+input_root_dir = "/gpfs/work/pr94ga/di36lav/pism_input"
+ocean_data_dir = "/gpfs/work/pr94ga/di36lav/cmip5_to_ant"
 pism_exec = "./bin/pismr"
 pism_mpi_do = "mpiexec -n"
 # pik_partition="broadwell"

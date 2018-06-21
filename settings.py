@@ -15,7 +15,9 @@ else:
 
 code_version = "opttphi"
 grid_id = "initmip4km"
+
 experiment = code_version+"_056_"+grid_id+"_nomassoceanconst"
+
 
 pism_experiments_dir = os.path.join(home_dir,"pism_experiments")
 pismcode_dir = os.path.join(home_dir,"pism")
@@ -30,6 +32,7 @@ pism_config_file = os.path.join(pismcode_dir,code_version,"src/pism_config.cdl")
 override_params = collections.OrderedDict([
 # "ocean.pico.continental_shelf_depth", -2000,
 ("stress_balance.sia.enhancement_factor",1.0),
+("stress_balance.ssa.enhancement_factor",1.0),
 ("stress_balance.model","ssa+sia"),
 ("time_stepping.skip.enabled", "yes"),
 ("basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden", 0.03),
@@ -84,18 +87,21 @@ ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"
 # ocean_data_dir = ""
 oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means.nc")
 
-ocean_data_dir = "/p/tmp/mengel/pycmip5/p003_testing"
+#ocean_data_dir = "/p/tmp/mengel/pycmip5/p003_testing"
 # earlier settings overwritten by iterables
 its = ["CSIRO-Mk3-6-0_historical+rcp85","GFDL-CM3_historical+rcp85","IPSL-CM5A-LR_historical+rcp85"]
 
 iterables = {}
-iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
-    "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
-    for k in its}
+#iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
+#    "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
+#    for k in its}
 
 param_iterables = {}
-# param_iterables["ocean.pico.overturning_coefficent"] = [1e5,2e5,5e5]
-# param_iterables["ocean.pico.heat_exchange_coefficent"] = [5e-6,1e-5,5e-5]
+param_iterables["stress_balance.ssa.enhancement_factor"] = [0.8,1.0]
+param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.02,0.04]
+param_iterables["basal_resistance.pseudo_plastic.q"] = [0.5,0.75]
+param_iterables["ocean.pico.overturning_coefficent"] = [5e5,1e6]
+param_iterables["ocean.pico.heat_exchange_coefficent"] = [1e-5,2e-5,4e-5]
 
 # iterables["oceanfile"].update({"base":oceanfile})
 

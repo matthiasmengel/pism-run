@@ -16,7 +16,7 @@ else:
 code_version = "opttphi"
 grid_id = "initmip8km"
 
-experiment = code_version+"_056_"+grid_id+"_nomassoceanconst"
+experiment = code_version+"_058_"+grid_id+"_resoensemble"
 
 
 pism_experiments_dir = os.path.join(home_dir,"pism_experiments")
@@ -42,7 +42,7 @@ override_params = collections.OrderedDict([
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_max", 50.0),
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_min", -700.0),
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_max", 500.0),
-("hydrology.tillwat_decay_rate", 10.0),
+("hydrology.tillwat_decay_rate", 5.0),
 # grounding line interpolations
 ("energy.basal_melt.use_grounded_cell_fraction", "false"),
 ("calving.methods", "eigen_calving,thickness_calving"),
@@ -83,7 +83,7 @@ atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"
 
 # ocean_data_dir = ""
-oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means.nc")
+oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means_amundsen_m0p37.nc")
 
 #ocean_data_dir = "/p/tmp/mengel/pycmip5/p003_testing"
 # earlier settings overwritten by iterables

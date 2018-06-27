@@ -11,6 +11,9 @@ without code edits.
 
 Edit the `settings.py`, `supermuc_settings.py` and `pikcluster_settings.py` files.
 
+Take special care of naming your experiment through `experiment` in settings.py.
+You may overwrite older run scripts if this is not changed.
+
 `python create_run.py` will create a single run.
 
 `python create_set.py` will create a ensemble of runs.
@@ -27,8 +30,8 @@ Hashes identify your run and relate the set of parameters to the
 script folder for running pism. The hash is part of each folder name of
 an ensemble.
 
-Not all changes to the run scripts can be done via settings.py. You may
-edit the templates in `templates/` for heavier tweaks. 
+Not all changes to the run scripts can be done via `settings.py`. You may
+edit the templates in `templates/` for heavier tweaks.
 
 ### License
 

@@ -14,7 +14,7 @@ else:
     from supermuc_settings import *
 
 code_version = "opttphi"
-grid_id = "initmip4km"
+grid_id = "initmip8km"
 
 experiment = code_version+"_056_"+grid_id+"_nomassoceanconst"
 
@@ -37,19 +37,17 @@ override_params = collections.OrderedDict([
 ("time_stepping.skip.enabled", "yes"),
 ("basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden", 0.03),
 ("basal_resistance.pseudo_plastic.q", 0.75),
-("basal_yield_stress.mohr_coulomb.topg_to_phi.enabled",  "no"),
-# ("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_min", 5.0),
-# ("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_max", 15.0),
-# ("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_min", -1000.0),
-# ("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_max", 1000.0),
-
+("basal_yield_stress.mohr_coulomb.topg_to_phi.enabled",  "yes"),
+("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_min", 5.0),
+("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_max", 50.0),
+("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_min", -700.0),
+("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_max", 500.0),
+("hydrology.tillwat_decay_rate", 10.0),
 # grounding line interpolations
 ("energy.basal_melt.use_grounded_cell_fraction", "false"),
-
 ("calving.methods", "eigen_calving,thickness_calving"),
 ("calving.eigen_calving.K", 1e17),
 ("calving.thickness_calving.threshold", 200),
-
 # the following four options are equivalent to command line option -pik
 # if all set to true
 ("stress_balance.calving_front_stress_bc", "true"),
@@ -79,7 +77,7 @@ infile_smoothing = os.path.join(working_dir,"picobw_050_initmip4km_testing1",
 
 # infile = bootstrapfile
 # infile_full_physics = os.path.join(working_dir,"picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc")
-infile_full_physics = "nomass.nc"
+infile_full_physics = "no_mass.nc"
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"

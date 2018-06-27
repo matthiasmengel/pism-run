@@ -47,7 +47,7 @@ grid="{{settings.grid}}"
 {% if "nomass" in settings.steps %}
 
 init_opts="-i $bootstrapfile -bootstrap $grid"
-nomass_opts="-no_mass -stress_balance none -o no_mass.nc -ys 100000 -ye 200000"
+nomass_opts="-no_mass -stress_balance sia -o no_mass.nc -ys 100000 -ye 200000"
 options="$init_opts $run_opts $atm_opts $nomass_opts"
 
 echo "### no mass options:"
@@ -56,10 +56,10 @@ cd $outdir
 $PISM_DO $options
 
 # workaround: add tillphi to no_mass file
-ncks -O -6 -v tillphi $bootstrapfile tillphi_tempfile.nc
-ncap2 -O -s "lon_bnds=float(lon_bnds);lat_bnds=float(lat_bnds)" tillphi_tempfile.nc tillphi_tempfile.nc
-cp no_mass.nc no_mass_tillphi.nc
-ncks -A -v tillphi tillphi_tempfile.nc no_mass_tillphi.nc
+#ncks -O -6 -v tillphi $bootstrapfile tillphi_tempfile.nc
+#ncap2 -O -s "lon_bnds=float(lon_bnds);lat_bnds=float(lat_bnds)" tillphi_tempfile.nc tillphi_tempfile.nc
+#cp no_mass.nc no_mass_tillphi.nc
+#ncks -A -v tillphi tillphi_tempfile.nc no_mass_tillphi.nc
 {% endif %}
 
 {% if "smoothing" in settings.steps %}

@@ -15,7 +15,6 @@ index_from_iterables = [[k]+[k+"_value"] for k in iterables.keys()]
 flat_list = [item for sublist in index_from_iterables for item in sublist]
 
 # collect things to vary, combine iterables and param_iterables
-# TODO: allow for empty dicts
 values_to_vary = collections.OrderedDict()
 values_to_vary.update(param_iterables)
 
@@ -37,9 +36,6 @@ for i,pc in enumerate(combinations):
 for k in iterables.keys():
     for i,v in enumerate(iterables[k].keys()):
         ensemble_table.loc[ensemble_table[k] == v,k+"_value"] = iterables[k][v]
-
-
-# FIXME: check if all params all override params are in config.
 
 # bring ensemble table entries to settings and write experiments
 for ind in ensemble_table.index:
@@ -67,29 +63,3 @@ ensemble_table.to_csv(os.path.join("sets",settings.experiment+".txt"),
                       sep=" ", index_label="hash")
 print "Wrote ensemble table to", os.path.join("sets",settings.experiment+".txt")
 
-# experiments = []
-
-# # for key,its in settings.iterables.iteritems():
-
-# for key,its in settings.param_iterables.iteritems():
-
-#     for k,v in its.iteritems():
-
-#       for v in its:
-
-#         # overwrite settings with iterable
-#         # settings.__dict__[key] = v
-#         settings.override_params[key] = v
-#         experiment = settings.experiment+"_"+str(v)
-
-#         cr.write_pism_script(settings, "pism_run.sh.jinja2",
-#                           experiment=experiment)
-#         cr.write_pism_script(settings, "submit.sh.jinja2",
-#                           experiment=experiment)
-#         cr.write_pism_script(settings, "config_override.cdl.jinja2",
-#                               experiment=experiment)
-#         experiments.append(experiment)
-
-# with open(os.path.join("sets",settings.experiment+".txt"), 'w') as f:
-#     for exp in experiments:
-#         f.write(exp+"\n")

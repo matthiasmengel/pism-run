@@ -47,20 +47,19 @@ export PISM_ON_CLUSTER=1
 #@ minimize_time_to_solution = yes
 #@ queue
 
-. /etc/profile
-. /etc/profile.d/modules.sh
-
-#setup of environment
+source /etc/profile.d/modules.sh
 module unload mpi.ibm intel mkl netcdf
-module load mkl/11.3 intel/16.0 mpi.intel
-module load netcdf/mpi/4.3  ## or module load netcdf/mpi/4.4
-module load gcc/6
-module load gsl/2.3
-module load hdf5/mpi
-module load fftw/mpi/3.3
+module load mkl/2018 intel/18.0 mpi.intel/2018
+module load hdf5/mpi/1.10.1
+module load gcc/8
+module load gsl/2.4
+module load fftw/mpi/v3_mkl2018
 
-export PETSC_DIR=/home/hpc/pr94ga/di36lav/petsc/petsc-3.7.6-mpicc
-export PETSC_ARCH=arch-linux2-c-debug
+NETCDF_ROOT=/home/hpc/pr94ga/di36lav/software/netcdf-4.6.1-intel-2018
+export PATH=$NETCDF_ROOT/bin:$PATH
+
+export PETSC_DIR=/home/hpc/pr94ga/di36lav/petsc/petsc-3.9.2-intel2018
+export PETSC_ARCH=arch-linux2-c-opt
 
 # get user and computer specific variables like paths
 runname=`echo $PWD | awk -F/ '{print $NF}'`

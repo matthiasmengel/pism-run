@@ -13,7 +13,7 @@ if username=="mengel":
 else:
     from supermuc_settings import *
 
-code_version = "opttphi"
+code_version = "dev"
 grid_id = "initmip8km"
 
 experiment = code_version+"_058_"+grid_id+"_resoensemble"
@@ -95,11 +95,13 @@ iterables = {}
 #    for k in its}
 
 param_iterables = {}
-param_iterables["stress_balance.ssa.enhancement_factor"] = [0.8,1.0]
-param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.02,0.04]
-param_iterables["basal_resistance.pseudo_plastic.q"] = [0.5,0.75]
-param_iterables["ocean.pico.overturning_coefficent"] = [5e5,1e6]
-param_iterables["ocean.pico.heat_exchange_coefficent"] = [1e-5,2e-5,4e-5]
+param_iterables["stress_balance.sia.enhancement_factor"] = [1,2,3]
+param_iterables["stress_balance.ssa.enhancement_factor"] = [0.4,0.7,1.0]
+param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.02,0.03,0.04]
+param_iterables["basal_resistance.pseudo_plastic.q"] = [0.25,0.5,0.75]
+param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
+#param_iterables["ocean.pico.overturning_coefficent"] = [5e5,1e6]
+#param_iterables["ocean.pico.heat_exchange_coefficent"] = [1e-5,2e-5,4e-5]
 
 # iterables["oceanfile"].update({"base":oceanfile})
 

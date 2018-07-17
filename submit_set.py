@@ -11,7 +11,7 @@ import settings; reload(settings)
 ensemble_table = pd.read_csv(os.path.join("sets",settings.experiment+".txt"),
                              sep='\s+',index_col=0)
 
-for exp_hash in ensemble_table.index[0:200]:
+for exp_hash in ensemble_table.index[:]:
 
     ens_member_name = settings.experiment+"_"+exp_hash
     ens_member_path = os.path.join(settings.pism_experiments_dir,ens_member_name)

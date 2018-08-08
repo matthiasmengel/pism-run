@@ -97,8 +97,11 @@ infile={{settings.infile_full_physics}}twatdec{{settings.override_params["hydrol
 # ncap2 -O -s 'tillwat=tillwat*0.95' $infile $infile
 restart_file=snapshots_restart_2150.000.nc
 
-{% if settings.bootstrappinig %}
+{% if settings.init == "bootstrapping" %}
 init_opts="-i $infile -bootstrap $grid -ys $startyear -y $length"
+{% elif settings.init == "regrid" %}
+init_opts="-i $bootstrapfile -bootstrap $grid -regrid_file $infile \
+-regrid_vars enthalpy,litho_temp,tillwat -ys $startyear -y $length"
 {% else %}
 restart=false
 if $restart ; then

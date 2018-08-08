@@ -33,9 +33,9 @@ def write_pism_script(settings, template_file,
         os.chmod(fname, os.stat(fname).st_mode | stat.S_IEXEC)
 
     if printe:
-        print "##", experiment_dir
+        print("##", experiment_dir)
 
-    print fname, "written."
+    print(fname, "written.")
 
 
 def get_pism_config_as_dict(settings):
@@ -70,7 +70,7 @@ def copy_from_template(settings, filename,
     experiment_dir = os.path.join(settings.pism_experiments_dir,
                                   experiment)
     shutil.copy(os.path.join("templates",filename), experiment_dir)
-    print os.path.join(experiment_dir, filename), "copied."
+    print(os.path.join(experiment_dir, filename), "copied.")
 
 
 if __name__ == "__main__":

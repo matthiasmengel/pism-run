@@ -32,7 +32,7 @@ export PISM_ON_CLUSTER=1
 
 #@ job_name = smuc_$(cluster)_$(stepid)
 #@ class = micro
-#@ group = pr94ga
+#@ group = pn69ru
 #@ notify_user = mengel@pik-potsdam.de
 #@ job_type = MPICH
 #@ output = ./loadl.out
@@ -55,10 +55,10 @@ module load gcc/8
 module load gsl/2.4
 module load fftw/mpi/v3_mkl2018
 
-NETCDF_ROOT=/home/hpc/pr94ga/di36lav/software/netcdf-4.6.1-intel-2018
+NETCDF_ROOT=/home/hpc/pn69ru/di36lav2/software/netcdf-4.6.1-intel-2018
 export PATH=$NETCDF_ROOT/bin:$PATH
 
-export PETSC_DIR=/home/hpc/pr94ga/di36lav/petsc/petsc-3.9.2-intel2018
+export PETSC_DIR=/home/hpc/pn69ru/di36lav2/petsc/petsc-3.9.2-intel2018
 export PETSC_ARCH=arch-linux2-c-opt
 
 # get user and computer specific variables like paths

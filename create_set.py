@@ -5,7 +5,7 @@ import collections
 import hashlib
 import pandas as pd
 import create_run as cr
-import settings; reload(settings)
+import settings
 
 iterables = settings.iterables
 param_iterables = settings.param_iterables
@@ -25,12 +25,27 @@ for k in iterables.keys():
 combinations = list(itertools.product(*values_to_vary.values()))
 labels = values_to_vary.keys()
 
-ensemble_table = pd.DataFrame(columns=param_iterables.keys()+flat_list)
+ensemble_table = pd.DataFrame(columns=list(param_iterables.keys())+flat_list)
 
 for i,pc in enumerate(combinations):
-    em_id = hashlib.sha224(str(pc)).hexdigest()[0:8]
+    em_id = hashlib.sha224(str(pc).encode('utf-8')).hexdigest()[0:8]
     for j,l in enumerate(labels):
         ensemble_table.loc[em_id,l] = list(pc)[j]
+
+# split up topg_to_phi to original parameters.
+if "topg_to_phi" in ensemble_table.columns:
+    for em in ensemble_table.index:
+        tphip = ensemble_table.loc[em,"topg_to_phi"]
+        ensemble_table.loc[em,
+        "basal_yield_stress.mohr_coulomb.topg_to_phi.phi_min"] = tphip[0]
+        ensemble_table.loc[em,
+        "basal_yield_stress.mohr_coulomb.topg_to_phi.phi_max"] = tphip[1]
+        ensemble_table.loc[em,
+        "basal_yield_stress.mohr_coulomb.topg_to_phi.topg_min"] = tphip[2]
+        ensemble_table.loc[em,
+        "basal_yield_stress.mohr_coulomb.topg_to_phi.topg_max"] = tphip[3]
+
+    ensemble_table = ensemble_table.drop("topg_to_phi",axis=1)
 
 # also fill values from iterables dict
 for k in iterables.keys():
@@ -42,10 +57,10 @@ for ind in ensemble_table.index:
 
     for col in ensemble_table.columns:
 
-        if col in param_iterables:
-            settings.override_params[col] = ensemble_table.loc[ind,col]
         if col in iterables:
             settings.__dict__[col] = ensemble_table.loc[ind,col+"_value"]
+        else:
+            settings.override_params[col] = ensemble_table.loc[ind,col]
 
     experiment = settings.experiment+"_"+ind
 
@@ -61,5 +76,5 @@ for ind in ensemble_table.index:
 
 ensemble_table.to_csv(os.path.join("sets",settings.experiment+".txt"),
                       sep=" ", index_label="hash")
-print "Wrote ensemble table to", os.path.join("sets",settings.experiment+".txt")
+print("Wrote ensemble table to", os.path.join("sets",settings.experiment+".txt"))
 

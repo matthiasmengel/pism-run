@@ -16,7 +16,7 @@ else:
 code_version = "dev"
 grid_id = "initmip4km"
 
-experiment = code_version+"_058_"+grid_id+"_resoensemble4"
+experiment = code_version+"_058_"+grid_id+"_resoensemble5"
 
 
 pism_experiments_dir = os.path.join(home_dir,"pism_experiments")
@@ -62,10 +62,10 @@ override_params = collections.OrderedDict([
 
 startyear = 1850
 length = 1000
-boostrapping=False
+init="regrid" # or "bootstrapping" or ""
 # steps = ["smoothing_nomass","full_physics"]
 steps = []
-steps = ["nomass"]
+steps = ["full_physics"]
 
 grid = grids.grids[grid_id]
 
@@ -98,9 +98,10 @@ iterables = {}
 
 param_iterables = {}
 param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0,3.0]
-param_iterables["stress_balance.ssa.enhancement_factor"] = [0.4]#[1.0,0.4,0.7]
-param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.03]#,0.025,0.04]
-param_iterables["basal_resistance.pseudo_plastic.q"] = [0.25]#[0.75,0.25,0.5]
+param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4,0.7]
+param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"
+    ] = [0.03,0.025,0.04]
+param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
 param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
 #param_iterables["ocean.pico.overturning_coefficent"] = [5e5,1e6]
 #param_iterables["ocean.pico.heat_exchange_coefficent"] = [1e-5,2e-5,4e-5]

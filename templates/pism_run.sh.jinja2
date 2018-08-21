@@ -82,7 +82,7 @@ ncks -A -v tillphi tillphi_tempfile.nc smoothing_tillphi.nc
 {% endif %}
 
 
-{% if "full_physics" in settings.steps %}
+{%- if "full_physics" in settings.steps -%}
 oceanfile={{settings.oceanfile}}
 ocean_opts="{{settings.ocean_opts}}"
 
@@ -97,7 +97,7 @@ infile={{settings.infile_full_physics}}twatdec{{settings.override_params["hydrol
 # ncap2 -O -s 'tillwat=tillwat*0.95' $infile $infile
 restart_file=snapshots_restart_2150.000.nc
 
-{% if settings.init == "bootstrapping" %}
+{%- if settings.init == "bootstrapping" -%}
 init_opts="-i $infile -bootstrap $grid -ys $startyear -y $length"
 {% elif settings.init == "regrid" %}
 init_opts="-i $bootstrapfile -bootstrap $grid -regrid_file $infile \
@@ -110,8 +110,10 @@ else
   init_opts="-i $infile -ys $startyear -y $length"
 fi
 {% endif %}
+{% endif %}
 
-{% if "forcing" in settings.steps %}
+
+{% if "continue" in settings.steps %}
 oceanfile={{settings.oceanfile}}
 ocean_opts="{{settings.ocean_opts}}"
 
@@ -141,4 +143,3 @@ echo $PISM_DO $options
 
 cd $outdir
 $PISM_DO $options
-{% endif %}

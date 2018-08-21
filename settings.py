@@ -59,12 +59,11 @@ override_params = collections.OrderedDict([
 ("ocean.pico.exclude_ice_rises", "yes"),
 ])
 
-
-startyear = 1850
-length = 1000
+startyear = 2300
+length = 500
 init="regrid" # or "bootstrapping" or ""
 # steps = ["smoothing_nomass","full_physics", "forcing"]
-steps = ["forcing"]
+steps = ["continue"]
 
 grid = grids.grids[grid_id]
 
@@ -79,7 +78,6 @@ infile_smoothing = os.path.join(working_dir,"picobw_050_initmip4km_testing1",
 # infile_full_physics = os.path.join(working_dir,"picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc")
 # full file will be set in template
 infile_full_physics = "/gpfs/work/pr94ga/di36lav/pism_out/dev_058_initmip8km_resoensemble_nomass/no_mass_"
-infile_forcing = "/gpfs/work/pn69ru/di36lav2/pism_store/dev_058_initmip4km_resoensemble5/dev_058_initmip4km_resoensemble5_"
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"
@@ -117,6 +115,21 @@ param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
 #param_iterables["ocean.pico.heat_exchange_coefficent"] = [1e-5,2e-5,4e-5]
 
 # iterables["oceanfile"].update({"base":oceanfile})
+
+# for continue_set.py
+source_ensemble_table = "dev_058_initmip4km_resoensemble5.txt"
+# a subset of the hashes in ensemble_table, can also be "all".
+runs_to_continue = "data/lists_of_best/dev_058_initmip4km_resoensemble5best_20_amundsen_vel.txt"
+
+
+# ensemble hash is inserted between infile_continue[0] and infile_continue[1]
+# infile_continue = ["/gpfs/work/pn69ru/di36lav2/pism_store/dev_058_initmip4km_resoensemble5/dev_058_initmip4km_resoensemble5_",
+# "snapshots_2300.000.nc"]
+def get_infile_to_continue(ehash, year):
+    pre = "/gpfs/work/pn69ru/di36lav2/pism_store/dev_058_initmip4km_resoensemble5/dev_058_initmip4km_resoensemble5_"
+    fle = ["snapshots_",".000.nc"]
+    return os.path.join(pre+ehash,fle[0]+str(year)+fle[1])
+
 
 # no edits below this line needed.
 project_root = os.path.dirname(os.path.abspath(__file__))

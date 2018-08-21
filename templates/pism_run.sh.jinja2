@@ -111,6 +111,19 @@ else
 fi
 {% endif %}
 
+{% if "forcing" in settings.steps %}
+oceanfile={{settings.oceanfile}}
+ocean_opts="{{settings.ocean_opts}}"
+
+# inputs
+startyear={{settings.startyear}}
+length={{settings.length}}
+
+infile={{settings.infile}}
+init_opts="-i $infile -ys $startyear -y $length"
+{% endif %}
+
+
 extratm=0:50:1000000
 timestm=0:1:1000000
 snapstm=0:100:1000000

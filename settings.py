@@ -16,7 +16,7 @@ else:
 code_version = "dev"
 grid_id = "initmip4km"
 
-experiment = code_version+"_058_"+grid_id+"_resoensemble6tphi"
+experiment = code_version+"_058_"+grid_id+"_resoensemble7warmamund"
 
 
 pism_experiments_dir = os.path.join(home_dir,"pism_experiments")
@@ -36,7 +36,7 @@ override_params = collections.OrderedDict([
 ("stress_balance.model","ssa+sia"),
 ("time_stepping.skip.enabled", "yes"),
 ("basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden", 0.03),
-("basal_resistance.pseudo_plastic.q", 0.25),
+("basal_resistance.pseudo_plastic.q", 0.75),
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.enabled",  "yes"),
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_min", 5.0),
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_max", 50.0),
@@ -63,9 +63,8 @@ override_params = collections.OrderedDict([
 startyear = 1850
 length = 1000
 init="regrid" # or "bootstrapping" or ""
-# steps = ["smoothing_nomass","full_physics"]
-steps = []
-steps = ["full_physics"]
+# steps = ["smoothing_nomass","full_physics", "forcing"]
+steps = ["forcing"]
 
 grid = grids.grids[grid_id]
 
@@ -80,12 +79,14 @@ infile_smoothing = os.path.join(working_dir,"picobw_050_initmip4km_testing1",
 # infile_full_physics = os.path.join(working_dir,"picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc")
 # full file will be set in template
 infile_full_physics = "/gpfs/work/pr94ga/di36lav/pism_out/dev_058_initmip8km_resoensemble_nomass/no_mass_"
+infile_forcing = "/gpfs/work/pn69ru/di36lav2/pism_store/dev_058_initmip4km_resoensemble5/dev_058_initmip4km_resoensemble5_"
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"
 
 # ocean_data_dir = ""
-oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means_amundsen_m0p37.nc")
+oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means.nc")
+# oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means_amundsen_m0p37.nc")
 
 #ocean_data_dir = "/p/tmp/mengel/pycmip5/p003_testing"
 # earlier settings overwritten by iterables
@@ -97,21 +98,21 @@ iterables = {}
 #    for k in its}
 
 param_iterables = {}
-# param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0,3.0]
-# param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4,0.7]
-# param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"
-#     ] = [0.03,0.025,0.04]
-# param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
-param_iterables["hydrology.tillwat_decay_rate"] = [5,8,2]
+param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0,3.0]
+param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4,0.7]
+param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"
+    ] = [0.03,0.025,0.04]
+param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
+param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
 # special case topg_to_phi caught by if clause later:
-param_iterables["topg_to_phi"] = [
-[2.,20.,-700.,500.],
-[2.,50.,-500.,0.],
-[2.,20.,-500.,0.],
-[2.,50.,-500.,500.],
-[2.,20.,-500.,500.],
-[2.,30.,-500.,0.],
-[2.,50.,-500.,1000.]]
+# param_iterables["topg_to_phi"] = [
+# [2.,20.,-700.,500.],
+# [2.,50.,-500.,0.],
+# [2.,20.,-500.,0.],
+# [2.,50.,-500.,500.],
+# [2.,20.,-500.,500.],
+# [2.,30.,-500.,0.],
+# [2.,50.,-500.,1000.]]
 #param_iterables["ocean.pico.overturning_coefficent"] = [5e5,1e6]
 #param_iterables["ocean.pico.heat_exchange_coefficent"] = [1e-5,2e-5,4e-5]
 

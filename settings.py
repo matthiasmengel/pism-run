@@ -16,7 +16,7 @@ else:
 code_version = "dev"
 grid_id = "initmip4km"
 
-experiment = code_version+"_058_"+grid_id+"_resoensemble7warmamund"
+experiment = code_version+"_058_"+grid_id+"_best20_amund_gl_vel_amundnormal"
 
 
 pism_experiments_dir = os.path.join(home_dir,"pism_experiments")
@@ -119,7 +119,7 @@ param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
 # for continue_set.py
 source_ensemble_table = "dev_058_initmip4km_resoensemble5.txt"
 # a subset of the hashes in ensemble_table, can also be "all".
-runs_to_continue = "data/lists_of_best/dev_058_initmip4km_resoensemble5best_20_amundsen_vel.txt"
+runs_to_continue = "data/lists_of_best/dev_058_initmip4km_resoensemble5best_20_amundsen_vel_gl.txt"
 
 
 # ensemble hash is inserted between infile_continue[0] and infile_continue[1]

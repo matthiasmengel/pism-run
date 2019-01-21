@@ -64,21 +64,21 @@ for ind in ensemble_table.index:
 
     experiment = settings.experiment+"_"+ind
 
-    settings.infile = os.path.join(settings.infile_forcing+ind,"snapshots_2300.000.nc")
+    # settings.infile = os.path.join(settings.infile_forcing+ind,"snapshots_2300.000.nc")
 
-    print(settings.infile)
+    # print(settings.infile)
 
-#     cr.write_pism_script(settings, "pism_run.sh.jinja2",
-#                       experiment=experiment)
-#     cr.write_pism_script(settings, "submit.sh.jinja2",
-#                       experiment=experiment)
-#     cr.write_pism_script(settings, "config_override.cdl.jinja2",
-#                           experiment=experiment)
-#     cr.write_pism_script(settings, "prepare_restart.sh.jinja2",
-#                           experiment=experiment)
+    cr.write_pism_script(settings, "pism_run.sh.jinja2",
+                      experiment=experiment)
+    cr.write_pism_script(settings, "submit.sh.jinja2",
+                      experiment=experiment)
+    cr.write_pism_script(settings, "config_override.cdl.jinja2",
+                          experiment=experiment)
+    cr.write_pism_script(settings, "prepare_restart.sh.jinja2",
+                          experiment=experiment)
 
 
-# ensemble_table.to_csv(os.path.join("sets",settings.experiment+".txt"),
-#                       sep=" ", index_label="hash")
-# print("Wrote ensemble table to", os.path.join("sets",settings.experiment+".txt"))
+ensemble_table.to_csv(os.path.join("sets",settings.experiment+".txt"),
+                      sep=" ", index_label="hash")
+print("Wrote ensemble table to", os.path.join("sets",settings.experiment+".txt"))
 

@@ -110,7 +110,6 @@ else
   init_opts="-i $infile -ys $startyear -y $length"
 fi
 {% endif %}
-{% endif %}
 
 
 {% if "continue" in settings.steps %}
@@ -143,3 +142,7 @@ echo $PISM_DO $options
 
 cd $outdir
 $PISM_DO $options
+
+{% endif %}
+
+

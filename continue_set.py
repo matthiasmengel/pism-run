@@ -1,3 +1,9 @@
+###
+# This script is designed to continue a run from a number of promising runs at given years. 
+# There are hand-selected for example using pism-ensemble-analysis and written to a file
+# as indicated in settings.py 
+# The file should contain the hash and year of the runs to be continued
+#
 
 import os
 import itertools
@@ -25,9 +31,12 @@ import settings
 # combinations = list(itertools.product(*values_to_vary.values()))
 # labels = values_to_vary.keys()
 
+print('Full ensemlbe: '+os.path.join("sets",settings.source_ensemble_table))
+
 ensemble_table = pd.read_csv(os.path.join("sets",settings.source_ensemble_table),
                              sep='\s+',index_col=0)
 
+print('Runs to be continued are defined in:'+settings.runs_to_continue)
 runs_to_continue = pd.read_csv(settings.runs_to_continue,
                              sep='\s+')
 

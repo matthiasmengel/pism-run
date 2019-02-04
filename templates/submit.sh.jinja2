@@ -9,7 +9,7 @@
 #SBATCH --error=./slurm_error.err
 #SBATCH --ntasks=160
 #SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=mengel@pik-potsdam.de
+#SBATCH --mail-user=reese@pik-potsdam.de
 {% if settings.pik_partition=="broadwell" -%}
 #SBATCH --tasks-per-node=32
 #SBATCH --partition=broadwell
@@ -33,7 +33,7 @@ export PISM_ON_CLUSTER=1
 #@ job_name = smuc_$(cluster)_$(stepid)
 #@ class = micro
 #@ group = pn69ru
-#@ notify_user = mengel@pik-potsdam.de
+#@ notify_user = reese@pik-potsdam.de
 #@ job_type = MPICH
 #@ output = ./loadl.out
 #@ error  = ./loadl.err
@@ -55,7 +55,8 @@ module load gcc/8
 module load gsl/2.4
 module load fftw/mpi/v3_mkl2018
 
-NETCDF_ROOT=/home/hpc/pn69ru/di36lav2/software/netcdf-4.6.1-intel-2018
+#NETCDF_ROOT=/home/hpc/pn69ru/di36lav2/software/netcdf-4.6.1-intel-2018
+NETCDF_ROOT=/home/hpc/pn69ru/di36lav2/software/netcdf-c-4.6.2-intel-2018
 export PATH=$NETCDF_ROOT/bin:$PATH
 
 export PETSC_DIR=/home/hpc/pn69ru/di36lav2/petsc/petsc-3.9.2-intel2018

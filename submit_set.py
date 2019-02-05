@@ -8,7 +8,8 @@ import pandas as pd
 import subprocess
 import settings
 
-continued_submission = True
+# Set this to True if you want to continue previous runs, when submitting this the first time, set to False
+continued_submission = False
 
 def submit(ens_member_name):
 

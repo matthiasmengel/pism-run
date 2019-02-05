@@ -7,19 +7,24 @@ import pwd
 username = pwd.getpwuid(os.getuid()).pw_name
 
 is_pikcluster = False
-if username=="mengel":
+if username=="reese":
     is_pikcluster = True
     from pikcluster_settings import *
 else:
     from supermuc_settings import *
 
+# FIXME change code version
 code_version = "dev"
-grid_id = "initmip4km"
+#code_version = "pism1.1"
+grid_id = "initmip16km"
 
-experiment = code_version+"_059_"+grid_id+"_testing"
+experiment = code_version+"_063_"+grid_id+"_testing_small_ensemble_full_physics"
 
 pism_experiments_dir = os.path.join(home_dir,"pism_experiments")
-pismcode_dir = os.path.join(home_dir,"pism")
+# FIXME change this to again to when using my own pism repo
+#pismcode_dir = os.path.join(home_dir,"pism")
+pismcode_dir = os.path.join(home_dir_mengel,"pism")
+
 
 input_data_dir = os.path.join(input_root_dir,"merged")
 atm_data_dir = os.path.join(input_root_dir,"merged")
@@ -58,10 +63,18 @@ override_params = collections.OrderedDict([
 ("ocean.pico.exclude_ice_rises", "yes"),
 ])
 
+# Select the start year, this does only affect special runs - FIXME which?
 startyear = 2300
 length = 500
-init="regrid" # or "bootstrapping" or ""
-steps = ["smoothing_nomass","full_physics"]#, "forcing"]
+# The following choices apply only to the full_physics run 
+# 'bootrstrapping' the file is bootstrapped, 
+# 'regrid' bootrstrapping + regridding of certain variables
+# '' if this is a restart run ?
+init="" #"regrid" or "bootstrapping" or ""
+# Select the run type. Possible choices are "nomass", "smoothing", "full_physics", "forcing"
+# FIXME the order of the runs should be as ? 
+#steps = ["smoothing","nomass", "full_physics", "forcing"]#["smoothing_nomass"] #,"full_physics", "forcing"]
+steps = ["full_physics"]
 # steps = ["continue"]
 
 grid = grids.grids[grid_id]
@@ -70,13 +83,15 @@ bootstrapfile = os.path.join(input_data_dir,
                       "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
 # infile = "no_mass.nc"
 
-infile_smoothing = os.path.join(working_dir,"picobw_050_initmip4km_testing1",
-                      "no_mass_tillphi.nc")
+# use the smoothing file created with esia=essa=1
+infile_smoothing = os.path.join(working_dir,"dev_061_initmip16km_testing_small_ensemble_dbeb47a0/",
+                      "no_mass.nc")
 
 # infile = bootstrapfile
 # infile_full_physics = os.path.join(working_dir,"picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc")
 # full file will be set in template
-infile_full_physics = "/gpfs/work/pr94ga/di36lav/pism_out/dev_058_initmip8km_resoensemble_nomass/no_mass_"
+infile_full_physics = "/gss/scratch/pn69ru/di52cok/pism_out/dev_062_initmip16km_testing_small_ensemble_smoothing/smoothing_tillphi"
+#infile_full_physics = "/gpfs/work/pr94ga/di36lav/pism_out/dev_058_initmip8km_resoensemble_nomass/no_mass_"
 infile_forcing = "/gpfs/work/pn69ru/di36lav2/pism_store/dev_058_initmip4km_resoensemble5/dev_058_initmip4km_resoensemble5_"
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
@@ -87,16 +102,18 @@ oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means.nc")
 # oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means_amundsen_m0p37.nc")
 
 #ocean_data_dir = "/p/tmp/mengel/pycmip5/p003_testing"
+ocean_data_dir = "/p/tmp/mengel/pycmip5/p003_testing"
 # earlier settings overwritten by iterables
 its = ["CSIRO-Mk3-6-0_historical+rcp85","GFDL-CM3_historical+rcp85","IPSL-CM5A-LR_historical+rcp85"]
 
 iterables = {}
-iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
-   "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
-   for k in its}
+# FIXME include the ocean file iterables later on again
+#iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
+#   "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
+#   for k in its}
 
 param_iterables = {}
-param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0,]
+param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0]
 param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4]
 # param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"
 #     ] = [0.03,0.025,0.04]
@@ -117,9 +134,10 @@ param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4]
 # iterables["oceanfile"].update({"base":oceanfile})
 
 # for continue_set.py
-source_ensemble_table = "dev_058_initmip4km_resoensemble5.txt"
+# FIXME make sure to reset this value..
+source_ensemble_table = "dev_060_initmip4km_testing_small_ensemble.txt"
 # a subset of the hashes in ensemble_table, can also be "all".
-runs_to_continue = "data/lists_of_best/dev_058_initmip4km_resoensemble5best_20_amundsen_vel_gl.txt"
+runs_to_continue = "sets/dev_060_initmip4km_testing_small_ensemble.txt" #"data/lists_of_best/dev_058_initmip4km_resoensemble5best_20_amundsen_vel_gl.txt"
 
 
 # ensemble hash is inserted between infile_continue[0] and infile_continue[1]

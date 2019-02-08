@@ -113,6 +113,8 @@ fi
 {% endif %}
 
 
+
+
 {% if "continue" in settings.steps %}
 oceanfile={{settings.oceanfile}}
 ocean_opts="{{settings.ocean_opts}}"
@@ -145,5 +147,7 @@ cd $outdir
 $PISM_DO $options
 
 {% endif %}
+
+
 
 

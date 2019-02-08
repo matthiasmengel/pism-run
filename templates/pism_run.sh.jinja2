@@ -149,5 +149,35 @@ $PISM_DO $options
 {% endif %}
 
 
+{%- if "forcing" in settings.steps -%}
+oceanfile={{settings.oceanfile}}
+ocean_opts="{{settings.ocean_opts}}"
 
+# inputs
+startyear={{settings.startyear}}
+length={{settings.length}}
+
+infile={{settings.infile_forcing}}.nc
+
+init_opts="-i $infile -ys $startyear -y $length"
+
+extratm=0:50:1000000
+timestm=0:1:1000000
+snapstm=0:100:1000000
+
+extra_vars="mask,thk,velsurf_mag,velbase_mag,flux_mag,tillwat,tauc,pico_overturning,pico_temperature_box0,\
+pico_salinity_box0,tillphi,shelfbmassflux,shelfbtemp,basins,bmelt,bfrict,bfrict,tendency_of_ice_amount"
+extra_opts="-extra_file extra -extra_split -extra_times $extratm -extra_vars $extra_vars"
+ts_opts="-ts_times $timestm -ts_file timeseries.nc"
+snaps_opts="-save_file snapshots -save_times $snapstm -save_split -save_size medium"
+output_opts="$extra_opts $snaps_opts $ts_opts -o out.nc"
+
+options="$init_opts $run_opts $atm_opts $ocean_opts $output_opts"
+echo "### PISM options:"
+echo $PISM_DO $options
+
+cd $outdir
+$PISM_DO $options
+
+{% endif %}
 

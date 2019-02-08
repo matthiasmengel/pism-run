@@ -71,7 +71,6 @@ override_params = collections.OrderedDict([
 ("geometry.part_grid.enabled", "true"),
 ("geometry.remove_icebergs", "true"),
 ("geometry.grounded_cell_fraction", "true"),
-
 ("ocean.pico.exclude_ice_rises", "yes"),
 ])
 
@@ -87,8 +86,8 @@ steps = ["full_physics"]
 
 
 # Only full_physics, forcing: select the start year and duration
-startyear = 2300
-length = 500
+startyear = 1850
+length = 450
 
 # Only full_physics: select the init type
 # "bootrstrapping": the file is bootstrapped, 
@@ -113,6 +112,9 @@ infile_smoothing = os.path.join(working_dir,"dev_061_initmip16km_testing_small_e
 infile_full_physics = "/gpfs/work/pn69ru/di52cok/pism_store/dev_061_initmip16km_testing_small_ensemble/dev_062_initmip16km_testing_small_ensemble_smoothing/smoothing_tillphi_adjtillwat"
 
 infile_forcing = "/gpfs/work/pn69ru/di52cok/pism_store/dev_061_initmip16km_testing_small_ensemble/dev_063_initmip16km_testing_small_ensemble_full_physics_dbeb47a0"
+# test this..
+runs_for_forcing = "data/lists_of_best/dev_063_initmip16km_testing_small_ensemble_full_physics_forcing.txt"
+
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"
@@ -127,14 +129,14 @@ its = ["CSIRO-Mk3-6-0_historical+rcp85","GFDL-CM3_historical+rcp85","IPSL-CM5A-L
 
 iterables = {}
 # FIXME include the ocean file iterables for "forcing" runs: 
-#iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
-#   "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
-#   for k in its}
+iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
+   "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
+   for k in its}
 
 # "full_physics": to create parameter ensemble
 param_iterables = {}
-param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0]
-param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4]
+#param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0]
+#param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4]
 # param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"
 #     ] = [0.03,0.025,0.04]
 # param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
@@ -154,7 +156,8 @@ param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4]
 # iterables["oceanfile"].update({"base":oceanfile})
 
 # for continue_set.py
-# FIXME add documentation...
+# This allows to continue a number of runs as specifies in runs_to_continue from the full_physics ensemble
+# it is not useful to create forcing runs, since the iterables are not taken into account
 source_ensemble_table = "dev_063_initmip16km_testing_small_ensemble_full_physics.txt"
 # a subset of the hashes in ensemble_table, can also be "all".
 runs_to_continue = "data/lists_of_best/dev_063_initmip16km_testing_small_ensemble_full_physics.txt" #"data/lists_of_best/dev_058_initmip4km_resoensemble5best_20_amundsen_vel_gl.txt"

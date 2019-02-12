@@ -33,7 +33,7 @@ rsync -aCv $pismcode_dir/$code_version/bin/pismr $outdir/bin/
 # set input files
 bootstrapfile={{settings.bootstrapfile}}
 atmfile={{settings.atm_data_dir}}/{{settings.atmfile}}
-
+regridfile_tillwat={{settings.regridfile_tillwat}}
 # boundary conditions
 atm_opts="-surface given -surface_given_file $atmfile"
 
@@ -46,8 +46,8 @@ grid="{{settings.grid}}"
 
 {% if "nomass" in settings.steps %}
 
-init_opts="-i $bootstrapfile -bootstrap $grid"
-nomass_opts="-no_mass -stress_balance sia -o no_mass.nc -ys 100000 -ye 200000"
+init_opts="-i $bootstrapfile -bootstrap $grid -regrid_file $regridfile_tillwat -regrid_vars tillwat"
+nomass_opts="-no_mass -stress_balance ssa+sia -o no_mass.nc -ys 1000000 -ye 1400000"
 options="$init_opts $run_opts $atm_opts $nomass_opts"
 
 echo "### no mass options:"

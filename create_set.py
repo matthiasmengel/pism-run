@@ -56,10 +56,14 @@ for k in iterables.keys():
 for ind in ensemble_table.index:
 
     for col in ensemble_table.columns:
-
         if col in iterables:
+            # case of iterables, e.g., oceanfiles, should be written to pism_run file
             settings.__dict__[col] = ensemble_table.loc[ind,col+"_value"]
+        elif any(iterable in col for iterable in iterables):
+            # case of oceanfile_value which should be simply ignored, should not be written to config_override
+            pass 
         else:
+            # case of standard parameters, should be written to config_override
             settings.override_params[col] = ensemble_table.loc[ind,col]
 
     experiment = settings.experiment+"_"+ind

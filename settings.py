@@ -21,7 +21,7 @@ else:
     from supermuc_settings import *
 
 # select pism code version
-code_version = "pism1.1" #"dev" # "pism1.1"
+code_version = "dev" #"dev" # "pism1.1"
 # select resolution of the run
 grid_id = "initmip16km"
 
@@ -29,12 +29,13 @@ grid_id = "initmip16km"
 # a useful approach is to have one number (_061_) for a suite of runs that get a
 # common name (_small_ensemble_) and an additional identifies for the current 
 # run step (_forcing_) 
-experiment = code_version+"_070_"+grid_id+"_ensemble_bedmap2_nomass_adjtillwat"
+experiment = code_version+"_063_"+grid_id+"_testing_small_ensemble_forcing"
+
 
 # directories
 pism_experiments_dir = os.path.join(home_dir,"pism_experiments")
-pismcode_dir = os.path.join(home_dir,"pism")
-#pismcode_dir = os.path.join(home_dir_mengel,"pism")
+#pismcode_dir = os.path.join(home_dir,"pism")
+pismcode_dir = os.path.join(home_dir_mengel,"pism")
 
 input_data_dir = os.path.join(input_root_dir,"merged")
 atm_data_dir = os.path.join(input_root_dir,"merged")
@@ -72,10 +73,10 @@ override_params = collections.OrderedDict([
 ("geometry.remove_icebergs", "true"),
 ("geometry.grounded_cell_fraction", "true"),
 ("ocean.pico.exclude_ice_rises", "yes"),
-# Include limit for the nomass runs! FIXME nomass only!
-("stress_balance.ssa.fd.max_speed", 10e3),
-("stress_balance.sia.limit_diffusivity", "yes"),
-("stress_balance.sia.max_diffusivity", 10),
+## Include limit for the nomass runs! FIXME nomass only!
+#("stress_balance.ssa.fd.max_speed", 10e3),
+#("stress_balance.sia.limit_diffusivity", "yes"),
+#("stress_balance.sia.max_diffusivity", 10),
 ])
 
 
@@ -86,12 +87,12 @@ override_params = collections.OrderedDict([
 # case you might want to limit sia-diffusivity and ssa velocities using config_override)
 # full_physics: run with full physics, select start year and input type below, select parametes for ensemble below
 # forcing: run forcing experiment, select forcing files below, FIXME this does not exist yet!
-steps = ["nomass"]
+steps = ["forcing"]
 
 
 # Only full_physics, forcing: select the start year and duration
 startyear = 2300
-length = 500
+length = 450
 
 # Only full_physics: select the init type
 # "bootrstrapping": the file is bootstrapped, 
@@ -114,9 +115,10 @@ infile_smoothing = os.path.join(working_dir,"dev_061_initmip16km_testing_small_e
 
 # infile = bootstrapfile
 # infile_full_physics = os.path.join(working_dir,"picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc")
-infile_full_physics = "/gpfs/work/pn69ru/di52cok/pism_store/dev_061_initmip16km_testing_small_ensemble/dev_062_initmip16km_testing_small_ensemble_smoothing/smoothing_tillphi_adjtillwat"
+infile_full_physics = os.path.join(store_data_dir,"dev_061_initmip16km_testing_small_ensemble/dev_062_initmip16km_testing_small_ensemble_smoothing/smoothing_tillphi_adjtillwat")
 
-infile_forcing = "/gpfs/work/pn69ru/di52cok/pism_store/dev_061_initmip16km_testing_small_ensemble/dev_063_initmip16km_testing_small_ensemble_full_physics_dbeb47a0"
+snapshot_forcing = "2800"
+infile_forcing = os.path.join(store_data_dir,"dev_061_initmip16km_testing_small_ensemble/dev_063_initmip16km_testing_small_ensemble_full_physics_dbeb47a0","snapshots_"+snapshot_forcing+".000")
 # test this..
 runs_for_forcing = "data/lists_of_best/dev_063_initmip16km_testing_small_ensemble_full_physics_forcing.txt"
 
@@ -134,14 +136,14 @@ its = ["CSIRO-Mk3-6-0_historical+rcp85","GFDL-CM3_historical+rcp85","IPSL-CM5A-L
 
 iterables = {}
 # FIXME include the ocean file iterables for "forcing" runs: 
-#iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
-#   "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
-#   for k in its}
+iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
+   "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
+   for k in its}
 
 # "full_physics": to create parameter ensemble
 param_iterables = {}
-param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0]
-param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4]
+#param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0]
+#param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4]
 # param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"
 #     ] = [0.03,0.025,0.04]
 # param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
@@ -158,6 +160,7 @@ param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4]
 # param_iterables["ocean.pico.overturning_coefficent"] = [5e5,1e6]
 #param_iterables["ocean.pico.heat_exchange_coefficent"] = [1e-5,2e-5,4e-5]
 
+# forcing: add also a control run in which the ocean data from before is used (e.g., schmidtko) 
 # iterables["oceanfile"].update({"base":oceanfile})
 
 # for continue_set.py

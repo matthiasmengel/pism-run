@@ -29,7 +29,7 @@ grid_id = "initmip16km"
 # a useful approach is to have one number (_061_) for a suite of runs that get a
 # common name (_small_ensemble_) and an additional identifies for the current 
 # run step (_forcing_) 
-experiment = code_version+"_063_"+grid_id+"_testing_small_ensemble_forcing"
+experiment = code_version+"_063_"+grid_id+"_testing_small_ensemble_forcing_2"
 
 
 # directories
@@ -91,7 +91,7 @@ steps = ["forcing"]
 
 
 # Only full_physics, forcing: select the start year and duration
-startyear = 2300
+startyear = 1850
 length = 450
 
 # Only full_physics: select the init type
@@ -103,6 +103,7 @@ init=""
 
 grid = grids.grids[grid_id]
 
+# input files for different steps:
 bootstrapfile = os.path.join(input_data_dir,
                       "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
 # regrid only the tillwat variable from a fit with rignot velocities
@@ -117,11 +118,7 @@ infile_smoothing = os.path.join(working_dir,"dev_061_initmip16km_testing_small_e
 # infile_full_physics = os.path.join(working_dir,"picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc")
 infile_full_physics = os.path.join(store_data_dir,"dev_061_initmip16km_testing_small_ensemble/dev_062_initmip16km_testing_small_ensemble_smoothing/smoothing_tillphi_adjtillwat")
 
-snapshot_forcing = "2800"
-infile_forcing = os.path.join(store_data_dir,"dev_061_initmip16km_testing_small_ensemble/dev_063_initmip16km_testing_small_ensemble_full_physics_dbeb47a0","snapshots_"+snapshot_forcing+".000")
-# test this..
-runs_for_forcing = "data/lists_of_best/dev_063_initmip16km_testing_small_ensemble_full_physics_forcing.txt"
-
+# forcing: see below 
 
 atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"
@@ -142,6 +139,7 @@ iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
 
 # "full_physics": to create parameter ensemble
 param_iterables = {}
+# FIXME: include parameters for full_physics ensemble
 #param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0]
 #param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4]
 # param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"
@@ -164,11 +162,15 @@ param_iterables = {}
 # iterables["oceanfile"].update({"base":oceanfile})
 
 # for continue_set.py
-# This allows to continue a number of runs as specifies in runs_to_continue from the full_physics ensemble
-# it is not useful to create forcing runs, since the iterables are not taken into account
+# This allows to continue a number of runs as specified in runs_to_continue from the full_physics ensemble
+# it is also used to create forcing runs:
 source_ensemble_table = "dev_063_initmip16km_testing_small_ensemble_full_physics.txt"
 # a subset of the hashes in ensemble_table, can also be "all".
 runs_to_continue = "data/lists_of_best/dev_063_initmip16km_testing_small_ensemble_full_physics.txt" #"data/lists_of_best/dev_058_initmip4km_resoensemble5best_20_amundsen_vel_gl.txt"
+
+# "forcing": infile is created in create_set_forcing by using get_infile_to_continue(ehash, year)
+# specify the infile(s) for the forcing run  
+runs_for_forcing = "data/lists_of_best/dev_063_initmip16km_testing_small_ensemble_full_physics_forcing.txt"
 
 
 # ensemble hash is inserted between infile_continue[0] and infile_continue[1]

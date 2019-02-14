@@ -46,9 +46,21 @@ grid="{{settings.grid}}"
 
 {% if "nomass" in settings.steps %}
 
+#extratm=0:100:1000000
+timestm=0:10:1000000
+snapstm=0:100:1000000
+
+#extra_vars="mask,thk,velsurf_mag,velbase_mag,flux_mag,tillwat,tauc,pico_overturning,pico_temperature_box0,\
+#pico_salinity_box0,tillphi,shelfbmassflux,shelfbtemp,basins,bmelt,bfrict,bfrict,tendency_of_ice_amount"
+#extra_opts="-extra_file extra -extra_split -extra_times $extratm -extra_vars $extra_vars"
+ts_vars="ice_area_glacierized_cold_base,ice_area_glacierized,ice_area_glacierized_temperate_base,ice_enthalpy,ice_enthalpy_glacierized,ice_volume,ice_volume_cold,ice_volume_glacierized_temperate,ice_volume_temperate,limnsw,max_diffusivity,max_hor_vel"
+ts_opts="-ts_times $timestm -ts_file timeseries.nc -ts_vars $ts_vars"
+snaps_opts="-save_file snapshots -save_times $snapstm -save_split -save_size medium"
+output_opts="$extra_opts $snaps_opts $ts_opts -o out.nc"
+
 init_opts="-i $bootstrapfile -bootstrap $grid -regrid_file $regridfile_tillwat -regrid_vars tillwat"
-nomass_opts="-no_mass -stress_balance ssa+sia -o no_mass.nc -ys 1000000 -ye 1400000"
-options="$init_opts $run_opts $atm_opts $nomass_opts"
+nomass_opts="-no_mass -stress_balance ssa+sia -o no_mass.nc -ys 100000 -ye 200000"
+options="$init_opts $run_opts $atm_opts $nomass_opts $output_opts"
 
 echo "### no mass options:"
 echo $PISM_DO $options

@@ -23,13 +23,13 @@ else:
 # select pism code version
 code_version = "pism1.1" #"dev" # "pism1.1"
 # select resolution of the run
-grid_id = "initmip16km"
+grid_id = "initmip8km"
 
 # ATTENTION: make sure to adjust this, otherwise, files will be overwritten
 # a useful approach is to have one number (_061_) for a suite of runs that get a
 # common name (_small_ensemble_) and an additional identifies for the current 
 # run step (_forcing_) 
-experiment = code_version+"_072_"+grid_id+"_bedmap2_nomass"
+experiment = code_version+"_075_"+grid_id+"_bedmap2_testing_ensemble"
 
 
 # directories
@@ -40,6 +40,7 @@ pismcode_dir = os.path.join(home_dir,"pism")
 input_data_dir = os.path.join(input_root_dir_mengel,"merged")
 atm_data_dir = os.path.join(input_root_dir_mengel,"merged")
 ocn_data_dir = os.path.join(input_root_dir_mengel,"schmidtko")
+ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p003_testing")
 tillwat_data_dir = os.path.join(input_root_dir, "tillwat")
 
 # set pism parameters that apply to all runs (unless part of the ensemble)
@@ -75,9 +76,9 @@ override_params = collections.OrderedDict([
 ("ocean.pico.exclude_ice_rises", "yes"),
 ("hydrology.set_tillwat_ocean", "yes"), # use Mattias tillwat fix
 ## Include limit for the nomass runs! FIXME nomass only!
-("stress_balance.ssa.fd.max_speed", 10e3),
-("stress_balance.sia.limit_diffusivity", "yes"),
-("stress_balance.sia.max_diffusivity", 10),
+#("stress_balance.ssa.fd.max_speed", 10e3),
+#("stress_balance.sia.limit_diffusivity", "yes"),
+#("stress_balance.sia.max_diffusivity", 10),
 ])
 
 
@@ -88,18 +89,18 @@ override_params = collections.OrderedDict([
 # case you might want to limit sia-diffusivity and ssa velocities using config_override)
 # full_physics: run with full physics, select start year and input type below, select parametes for ensemble below
 # forcing: run forcing experiment, select forcing files below, FIXME this does not exist yet!
-steps = ["nomass"]
+steps = ["full_physics"]
 
 
 # Only full_physics, forcing: select the start year and duration
-startyear = 1850
-length = 450
+startyear = 1000
+length = 1000
 
 # Only full_physics: select the init type
 # "bootrstrapping": the file is bootstrapped, 
 # "regrid": bootrstrapping + regridding of certain variables
 # "": -i option
-init="" 
+init="regrid" 
 
 
 grid = grids.grids[grid_id]
@@ -107,9 +108,9 @@ grid = grids.grids[grid_id]
 # input files for different steps:
 bootstrapfile = os.path.join(input_data_dir,
                       "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
-# regrid only the tillwat variable from a fit with rignot velocities
+# nomass run: regrid only the tillwat variable from a fit with rignot velocities
 regridfile_tillwat = os.path.join(tillwat_data_dir,
-		       "tillwat_"+grid_id+"_adj_rignot.nc")
+		       "tillwat_initmip16km_adj_rignot.nc")
 # infile = "no_mass.nc"
 
 # use the smoothing file created with esia=essa=1
@@ -118,7 +119,7 @@ infile_smoothing = os.path.join(working_dir,"dev_061_initmip16km_testing_small_e
 
 # infile = bootstrapfile
 # infile_full_physics = os.path.join(working_dir,"picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc")
-infile_full_physics = os.path.join(store_data_dir,"dev_061_initmip16km_testing_small_ensemble/dev_062_initmip16km_testing_small_ensemble_smoothing/smoothing_tillphi_adjtillwat")
+infile_full_physics = os.path.join(store_data_dir,"pism1.1_070_initmip16km_ensemble_bedmap2_nomass_adjtillwat/no_mass_tillwat")
 
 # forcing: see below 
 
@@ -126,8 +127,10 @@ atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"
 
 # ocean_data_dir = ""
-oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means.nc")
+# oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means.nc")
 # oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means_amundsen_m0p37.nc")
+# oceanfile = os.path.join(ocn_data_dir2,"thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1_"+grid_id+"_100km_time0.nc") 
+oceanfile = os.path.join(ocn_data_dir2, "thetao_Omon_GFDL-CM3_historical_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_historical_r1i1p1_"+grid_id+"_100km_time0.nc")
 
 # forcing: ocean data iterables
 ocean_data_dir = "/gpfs/work/pn69ru/di52cok/pism_input/pycmip5/p003_testing"
@@ -144,10 +147,9 @@ param_iterables = {}
 # FIXME: include parameters for full_physics ensemble
 #param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0]
 #param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4]
-# param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"
-#     ] = [0.03,0.025,0.04]
-# param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
-# param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
+param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.03,0.025,0.04]
+param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
+param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
 # special case topg_to_phi caught by if clause later:
 # param_iterables["topg_to_phi"] = [
 # [2.,20.,-700.,500.],

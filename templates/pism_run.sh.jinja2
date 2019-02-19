@@ -33,9 +33,11 @@ rsync -aCv $pismcode_dir/$code_version/bin/pismr $outdir/bin/
 # set input files
 bootstrapfile={{settings.bootstrapfile}}
 atmfile={{settings.atm_data_dir}}/{{settings.atmfile}}
-regridfile_tillwat={{settings.regridfile_tillwat}}
+
+
 # boundary conditions
 atm_opts="-surface given -surface_given_file $atmfile"
+
 
 # technical
 run_opts="-config_override config_override.nc -options_left \
@@ -46,9 +48,11 @@ grid="{{settings.grid}}"
 
 {% if "nomass" in settings.steps %}
 
+regridfile_tillwat={{settings.regridfile_tillwat}}
+
 #extratm=0:100:1000000
-timestm=0:10:1000000
-snapstm=0:100:1000000
+timestm=0:100:1000000
+snapstm=0:10000:1000000
 
 #extra_vars="mask,thk,velsurf_mag,velbase_mag,flux_mag,tillwat,tauc,pico_overturning,pico_temperature_box0,\
 #pico_salinity_box0,tillphi,shelfbmassflux,shelfbtemp,basins,bmelt,bfrict,bfrict,tendency_of_ice_amount"
@@ -108,6 +112,12 @@ infile={{settings.infile_full_physics}}.nc
 # cp {{settings.infile_smoothing}} $infile
 # workaround to avoid KSP error at startup
 # ncap2 -O -s 'tillwat=tillwat*0.95' $infile $infile
+## workaround: add tillwat fitted from rignot vels to no_mass file
+##ncks -O -6 -v tillwat $regridfile_tillwat tillwat_tempfile.nc
+##ncap2 -O -s "lon_bnds=float(lon_bnds);lat_bnds=float(lat_bnds)" tillwat_tempfile.nc tillwat_tempfile.nc
+##cp no_mass.nc no_mass_tillwat.nc
+##ncks -A -v tillwat tillwat_tempfile.nc no_mass_tillwat.nc
+
 restart_file=snapshots_restart_2150.000.nc
 
 {%- if settings.init == "bootstrapping" -%}

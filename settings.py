@@ -29,7 +29,7 @@ grid_id = "initmip8km"
 # a useful approach is to have one number (_061_) for a suite of runs that get a
 # common name (_small_ensemble_) and an additional identifies for the current 
 # run step (_forcing_) 
-experiment = code_version+"_075_"+grid_id+"_bedmap2_testing_ensemble"
+experiment = code_version+"_075_"+grid_id+"_bedmap2_mini_ensemble_thkcalv50_phimin"
 
 
 # directories
@@ -40,7 +40,10 @@ pismcode_dir = os.path.join(home_dir,"pism")
 input_data_dir = os.path.join(input_root_dir_mengel,"merged")
 atm_data_dir = os.path.join(input_root_dir_mengel,"merged")
 ocn_data_dir = os.path.join(input_root_dir_mengel,"schmidtko")
-ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p003_testing")
+# 4km, 16km
+# ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p003_testing")
+# 8km
+ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p004_8kmprojections")
 tillwat_data_dir = os.path.join(input_root_dir, "tillwat")
 
 # set pism parameters that apply to all runs (unless part of the ensemble)
@@ -56,7 +59,7 @@ override_params = collections.OrderedDict([
 ("basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden", 0.03),
 ("basal_resistance.pseudo_plastic.q", 0.75),
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.enabled",  "yes"),
-("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_min", 5.0),
+("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_min", 5.0), # 5.0
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_max", 50.0),
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_min", -700.0),
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_max", 500.0),
@@ -64,9 +67,11 @@ override_params = collections.OrderedDict([
 ("hydrology.tillwat_decay_rate", 5.0),
 # grounding line interpolations
 ("energy.basal_melt.use_grounded_cell_fraction", "false"),
-("calving.methods", "eigen_calving,thickness_calving"),
-("calving.eigen_calving.K", 1e17),
-("calving.thickness_calving.threshold", 200),
+("calving.methods", "ocean_kill"), 
+("calving.eigen_calving.K", 1e17), # 1e17
+("calving.thickness_calving.threshold", 50), # 200
+("calving.ocean_kill.file", os.path.join(input_data_dir,
+                      "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")),
 # the following four options are equivalent to command line option -pik
 # if all set to true
 ("stress_balance.calving_front_stress_bc", "true"),
@@ -127,12 +132,14 @@ atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"
 
 # ocean_data_dir = ""
-# oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means.nc")
+#oceanfile = os.path.join(input_root_dir, "schmidtko" ,"schmidtko_"+grid_id+"_means_cold.nc")
 # oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means_amundsen_m0p37.nc")
+# 8km
 # oceanfile = os.path.join(ocn_data_dir2,"thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1_"+grid_id+"_100km_time0.nc") 
-oceanfile = os.path.join(ocn_data_dir2, "thetao_Omon_GFDL-CM3_historical_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_historical_r1i1p1_"+grid_id+"_100km_time0.nc")
+# 4km and 16km
+oceanfile = os.path.join(ocn_data_dir2, "thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1_"+grid_id+"_100km_time0.nc")
 
-# forcing: ocean data iterables
+# forcing: ocean data iterables 4km
 ocean_data_dir = "/gpfs/work/pn69ru/di52cok/pism_input/pycmip5/p003_testing"
 its = ["CSIRO-Mk3-6-0_historical+rcp85","GFDL-CM3_historical+rcp85","IPSL-CM5A-LR_historical+rcp85"]
 
@@ -147,18 +154,22 @@ param_iterables = {}
 # FIXME: include parameters for full_physics ensemble
 #param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0]
 #param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4]
-param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.03,0.025,0.04]
-param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
-param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
+#param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.03,0.025,0.04]
+#param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
+#param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
 # special case topg_to_phi caught by if clause later:
-# param_iterables["topg_to_phi"] = [
-# [2.,20.,-700.,500.],
-# [2.,50.,-500.,0.],
-# [2.,20.,-500.,0.],
-# [2.,50.,-500.,500.],
-# [2.,20.,-500.,500.],
-# [2.,30.,-500.,0.],
-# [2.,50.,-500.,1000.]]
+param_iterables["topg_to_phi"] = [
+#[2.,20.,-700.,500.],
+#[2.,50.,-500.,0.],
+#[2.,20.,-500.,0.],
+#[2.,50.,-500.,500.],
+#[2.,20.,-500.,500.],
+#[2.,30.,-500.,0.],
+#[2.,50.,-500.,1000.]
+[1.0,50.,-700.,500.], 
+[2.0,50.,-700.,500.],
+[3.0,50.,-700.,500.],
+[4.0,50.,-700.,500.]]
 # param_iterables["ocean.pico.overturning_coefficent"] = [5e5,1e6]
 #param_iterables["ocean.pico.heat_exchange_coefficent"] = [1e-5,2e-5,4e-5]
 

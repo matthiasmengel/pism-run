@@ -29,7 +29,7 @@ grid_id = "initmip8km"
 # a useful approach is to have one number (_061_) for a suite of runs that get a
 # common name (_small_ensemble_) and an additional identifies for the current 
 # run step (_forcing_) 
-experiment = code_version+"_075_"+grid_id+"_bedmap2_mini_ensemble_thkcalv50_phimin"
+experiment = code_version+"_075_"+grid_id+"_bedmap2_mini_ensemble_thkcalv50_ecalv"
 
 
 # directories
@@ -157,8 +157,9 @@ param_iterables = {}
 #param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.03,0.025,0.04]
 #param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
 #param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
+param_iterables["calving.eigen_calving.K"] = [1.0e16, 5.0e16, 1.0e17, 5.0e17, 1.0e18]
 # special case topg_to_phi caught by if clause later:
-param_iterables["topg_to_phi"] = [
+#param_iterables["topg_to_phi"] = [
 #[2.,20.,-700.,500.],
 #[2.,50.,-500.,0.],
 #[2.,20.,-500.,0.],
@@ -166,10 +167,11 @@ param_iterables["topg_to_phi"] = [
 #[2.,20.,-500.,500.],
 #[2.,30.,-500.,0.],
 #[2.,50.,-500.,1000.]
-[1.0,50.,-700.,500.], 
-[2.0,50.,-700.,500.],
-[3.0,50.,-700.,500.],
-[4.0,50.,-700.,500.]]
+# new:
+#[1.0,50.,-700.,500.], 
+#[2.0,50.,-700.,500.],
+#[3.0,50.,-700.,500.],
+#[4.0,50.,-700.,500.]]
 # param_iterables["ocean.pico.overturning_coefficent"] = [5e5,1e6]
 #param_iterables["ocean.pico.heat_exchange_coefficent"] = [1e-5,2e-5,4e-5]
 

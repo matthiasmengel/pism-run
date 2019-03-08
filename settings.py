@@ -23,13 +23,14 @@ else:
 # select pism code version
 code_version = "pism1.1" #"dev" # "pism1.1"
 # select resolution of the run
-grid_id = "initmip8km"
+grid_id = "initmip4km" # FIXME
 
 # ATTENTION: make sure to adjust this, otherwise, files will be overwritten
 # a useful approach is to have one number (_061_) for a suite of runs that get a
 # common name (_small_ensemble_) and an additional identifies for the current 
 # run step (_forcing_) 
-experiment = code_version+"_075_"+grid_id+"_bedmap2_mini_ensemble_thkcalv50_ecalv"
+# FIXME
+experiment = code_version+"_075_"+grid_id+"_bedmap2_testing_calvthk50_okill_cold_ecalv1e16"
 
 
 # directories
@@ -40,10 +41,11 @@ pismcode_dir = os.path.join(home_dir,"pism")
 input_data_dir = os.path.join(input_root_dir_mengel,"merged")
 atm_data_dir = os.path.join(input_root_dir_mengel,"merged")
 ocn_data_dir = os.path.join(input_root_dir_mengel,"schmidtko")
+# FIXME
 # 4km, 16km
-# ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p003_testing")
+ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p003_testing")
 # 8km
-ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p004_8kmprojections")
+#ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p004_8kmprojections")
 tillwat_data_dir = os.path.join(input_root_dir, "tillwat")
 
 # set pism parameters that apply to all runs (unless part of the ensemble)
@@ -65,13 +67,14 @@ override_params = collections.OrderedDict([
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_max", 500.0),
 ("basal_resistance.pseudo_plastic.enabled","true"),
 ("hydrology.tillwat_decay_rate", 5.0),
-# grounding line interpolations
+# grounding line interpolations of melting
 ("energy.basal_melt.use_grounded_cell_fraction", "false"),
-("calving.methods", "ocean_kill"), 
-("calving.eigen_calving.K", 1e17), # 1e17
+("calving.methods", "ocean_kill,thickness_calving,eigen_calving"), # FIXME 
+("calving.eigen_calving.K", 1e16), # 1e17
 ("calving.thickness_calving.threshold", 50), # 200
 ("calving.ocean_kill.file", os.path.join(input_data_dir,
                       "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")),
+#("calving.float_kill.calve_near_grounding_line", "false"), # FIXME remove? Keep one shelf cell
 # the following four options are equivalent to command line option -pik
 # if all set to true
 ("stress_balance.calving_front_stress_bc", "true"),
@@ -97,9 +100,14 @@ override_params = collections.OrderedDict([
 steps = ["full_physics"]
 
 
-# Only full_physics, forcing: select the start year and duration
+# FIXME For full_physics, forcing: select the start year and duration
+# "full_physics"
 startyear = 1000
 length = 1000
+# "forcing"
+#startyear = 1850
+#length = 450
+
 
 # Only full_physics: select the init type
 # "bootrstrapping": the file is bootstrapped, 
@@ -132,15 +140,16 @@ atmfile = "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc"
 ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"
 
 # ocean_data_dir = ""
-#oceanfile = os.path.join(input_root_dir, "schmidtko" ,"schmidtko_"+grid_id+"_means_cold.nc")
+# FIXME select ocean file
+oceanfile = os.path.join(input_root_dir, "schmidtko" ,"schmidtko_"+grid_id+"_means_cold.nc")
 # oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means_amundsen_m0p37.nc")
 # 8km
 # oceanfile = os.path.join(ocn_data_dir2,"thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1_"+grid_id+"_100km_time0.nc") 
 # 4km and 16km
-oceanfile = os.path.join(ocn_data_dir2, "thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1_"+grid_id+"_100km_time0.nc")
+#oceanfile = os.path.join(ocn_data_dir2, "thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1_"+grid_id+"_100km_time0.nc")
 
 # forcing: ocean data iterables 4km
-ocean_data_dir = "/gpfs/work/pn69ru/di52cok/pism_input/pycmip5/p003_testing"
+ocean_data_dir = ocn_data_dir2 #"/gpfs/work/pn69ru/di52cok/pism_input/pycmip5/p003_testing"
 its = ["CSIRO-Mk3-6-0_historical+rcp85","GFDL-CM3_historical+rcp85","IPSL-CM5A-LR_historical+rcp85"]
 
 iterables = {}
@@ -157,7 +166,7 @@ param_iterables = {}
 #param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.03,0.025,0.04]
 #param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
 #param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
-param_iterables["calving.eigen_calving.K"] = [1.0e16, 5.0e16, 1.0e17, 5.0e17, 1.0e18]
+#param_iterables["calving.eigen_calving.K"] = [1.0e16, 5.0e16, 1.0e17, 5.0e17, 1.0e18]
 # special case topg_to_phi caught by if clause later:
 #param_iterables["topg_to_phi"] = [
 #[2.,20.,-700.,500.],
@@ -175,26 +184,29 @@ param_iterables["calving.eigen_calving.K"] = [1.0e16, 5.0e16, 1.0e17, 5.0e17, 1.
 # param_iterables["ocean.pico.overturning_coefficent"] = [5e5,1e6]
 #param_iterables["ocean.pico.heat_exchange_coefficent"] = [1e-5,2e-5,4e-5]
 
-# forcing: add also a control run in which the ocean data from before is used (e.g., schmidtko) 
+
+# FIXME forcing: add also a control run in which the ocean data from before is used (e.g., schmidtko) 
 # iterables["oceanfile"].update({"base":oceanfile})
 
-# for continue_set.py
+# for continue_set.py and create_set_forcing.py:
 # This allows to continue a number of runs as specified in runs_to_continue from the full_physics ensemble
-# it is also used to create forcing runs:
-source_ensemble_table = "dev_063_initmip16km_testing_small_ensemble_full_physics.txt"
-# a subset of the hashes in ensemble_table, can also be "all".
+# it is also used to create forcing runs (can also be a dummy containing only one run):
+source_ensemble_table = "pism1.1_075_initmip8km_bedmap2_testing_ensemble_calvthk50_okill_fake.txt"
+
+# For continue_set.py:  a subset of the hashes in ensemble_table, can also be "all".
 runs_to_continue = "data/lists_of_best/dev_063_initmip16km_testing_small_ensemble_full_physics.txt" #"data/lists_of_best/dev_058_initmip4km_resoensemble5best_20_amundsen_vel_gl.txt"
 
-# "forcing": infile is created in create_set_forcing by using get_infile_to_continue(ehash, year)
+# For "forcing": infile is created in create_set_forcing by using get_infile_to_continue(ehash, year)
 # specify the infile(s) for the forcing run  
-runs_for_forcing = "data/lists_of_best/dev_063_initmip16km_testing_small_ensemble_full_physics_forcing.txt"
+#runs_for_forcing = "data/lists_of_best/dev_063_initmip16km_testing_small_ensemble_full_physics_forcing.txt"
+runs_for_forcing = "data/lists_of_best/pism1.1_075_initmip8km_bedmap2_testing_calvthk50_okill.txt"
 
 
 # ensemble hash is inserted between infile_continue[0] and infile_continue[1]
 # infile_continue = ["/gpfs/work/pn69ru/di36lav2/pism_store/dev_058_initmip4km_resoensemble5/dev_058_initmip4km_resoensemble5_",
 # "snapshots_2300.000.nc"]
 def get_infile_to_continue(ehash, year):
-    pre = "/gpfs/work/pn69ru/di52cok/pism_store/dev_061_initmip16km_testing_small_ensemble/dev_063_initmip16km_testing_small_ensemble_full_physics_"
+    pre = os.path.join(store_data_dir, "pism1.1_075_initmip8km_bedmap2_testing_ensemble", "pism1.1_075_initmip8km_bedmap2_testing_calvthk50_okill_")
     fle = ["snapshots_",".000.nc"]
     return os.path.join(pre+ehash,fle[0]+str(year)+fle[1])
 

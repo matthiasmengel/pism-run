@@ -23,14 +23,14 @@ else:
 # select pism code version
 code_version = "pism1.1" #"dev" # "pism1.1"
 # select resolution of the run
-grid_id = "initmip4km" # FIXME
+grid_id = "initmip8km" # FIXME
 
 # ATTENTION: make sure to adjust this, otherwise, files will be overwritten
 # a useful approach is to have one number (_061_) for a suite of runs that get a
 # common name (_small_ensemble_) and an additional identifies for the current 
 # run step (_forcing_) 
 # FIXME
-experiment = code_version+"_075_"+grid_id+"_bedmap2_testing_calvthk50_okill_cold_ecalv1e16"
+experiment = code_version+"_077_"+grid_id+"_bedmachine_testing_ensemble_full_physics"
 
 
 # directories
@@ -39,13 +39,16 @@ pismcode_dir = os.path.join(home_dir,"pism")
 #pismcode_dir = os.path.join(home_dir_mengel,"pism")
 
 input_data_dir = os.path.join(input_root_dir_mengel,"merged")
+input_data_dir_bedmachine = os.path.join(input_root_dir, "BedMachine")
+
 atm_data_dir = os.path.join(input_root_dir_mengel,"merged")
 ocn_data_dir = os.path.join(input_root_dir_mengel,"schmidtko")
 # FIXME
 # 4km, 16km
-ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p003_testing")
+# ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p003_testing")
 # 8km
-#ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p004_8kmprojections")
+ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p004_8kmprojections")
+
 tillwat_data_dir = os.path.join(input_root_dir, "tillwat")
 
 # set pism parameters that apply to all runs (unless part of the ensemble)
@@ -70,7 +73,7 @@ override_params = collections.OrderedDict([
 # grounding line interpolations of melting
 ("energy.basal_melt.use_grounded_cell_fraction", "false"),
 ("calving.methods", "ocean_kill,thickness_calving,eigen_calving"), # FIXME 
-("calving.eigen_calving.K", 1e16), # 1e17
+("calving.eigen_calving.K", 1e17), # FIXME 1e17
 ("calving.thickness_calving.threshold", 50), # 200
 ("calving.ocean_kill.file", os.path.join(input_data_dir,
                       "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")),
@@ -83,10 +86,10 @@ override_params = collections.OrderedDict([
 ("geometry.grounded_cell_fraction", "true"),
 ("ocean.pico.exclude_ice_rises", "yes"),
 ("hydrology.set_tillwat_ocean", "yes"), # use Mattias tillwat fix
-## Include limit for the nomass runs! FIXME nomass only!
+## Include limit for the nomass runs! FIXME nomass only! And for Bedmachine because of convergence errors
 #("stress_balance.ssa.fd.max_speed", 10e3),
-#("stress_balance.sia.limit_diffusivity", "yes"),
-#("stress_balance.sia.max_diffusivity", 10),
+("stress_balance.sia.limit_diffusivity", "yes"),
+("stress_balance.sia.max_diffusivity", 10),
 ])
 
 
@@ -118,9 +121,14 @@ init="regrid"
 
 grid = grids.grids[grid_id]
 
-# input files for different steps:
-bootstrapfile = os.path.join(input_data_dir,
-                      "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
+# FIXME BEDMAP2 input files, used in nomass and for topography and ice thickness in full_physics (regridding) 
+#bootstrapfile = os.path.join(input_data_dir,
+#                      "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
+# FIXME BEDMACHINE input file
+bootstrapfile = os.path.join(input_data_dir_bedmachine,
+                        "bedmachine_"+grid_id+".nc")
+
+
 # nomass run: regrid only the tillwat variable from a fit with rignot velocities
 regridfile_tillwat = os.path.join(tillwat_data_dir,
 		       "tillwat_initmip16km_adj_rignot.nc")
@@ -141,10 +149,10 @@ ocean_opts = "-ocean pico -ocean_pico_file $oceanfile"
 
 # ocean_data_dir = ""
 # FIXME select ocean file
-oceanfile = os.path.join(input_root_dir, "schmidtko" ,"schmidtko_"+grid_id+"_means_cold.nc")
+# oceanfile = os.path.join(input_root_dir, "schmidtko" ,"schmidtko_"+grid_id+"_means_cold.nc")
 # oceanfile = os.path.join(ocn_data_dir,"schmidtko_"+grid_id+"_means_amundsen_m0p37.nc")
 # 8km
-# oceanfile = os.path.join(ocn_data_dir2,"thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1_"+grid_id+"_100km_time0.nc") 
+oceanfile = os.path.join(ocn_data_dir2,"thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1_"+grid_id+"_100km_time0.nc") 
 # 4km and 16km
 #oceanfile = os.path.join(ocn_data_dir2, "thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1/schmidtko_anomaly/thetao_Omon_GFDL-CM3_historical+rcp85_r1i1p1_"+grid_id+"_100km_time0.nc")
 

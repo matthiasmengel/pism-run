@@ -30,7 +30,7 @@ grid_id = "initmip8km" # FIXME
 # common name (_small_ensemble_) and an additional identifies for the current 
 # run step (_forcing_) 
 # FIXME
-experiment = code_version+"_077_"+grid_id+"_bedmachine_testing_ensemble_full_physics"
+experiment = code_version+"_075_"+grid_id+"_bedmap2_testing_thkcalv50_adjtillwat100linear" # no _
 
 
 # directories
@@ -88,8 +88,8 @@ override_params = collections.OrderedDict([
 ("hydrology.set_tillwat_ocean", "yes"), # use Mattias tillwat fix
 ## Include limit for the nomass runs! FIXME nomass only! And for Bedmachine because of convergence errors
 #("stress_balance.ssa.fd.max_speed", 10e3),
-("stress_balance.sia.limit_diffusivity", "yes"),
-("stress_balance.sia.max_diffusivity", 10),
+#("stress_balance.sia.limit_diffusivity", "yes"),
+#("stress_balance.sia.max_diffusivity", 10),
 ])
 
 
@@ -122,11 +122,11 @@ init="regrid"
 grid = grids.grids[grid_id]
 
 # FIXME BEDMAP2 input files, used in nomass and for topography and ice thickness in full_physics (regridding) 
-#bootstrapfile = os.path.join(input_data_dir,
-#                      "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
+bootstrapfile = os.path.join(input_data_dir,
+                      "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
 # FIXME BEDMACHINE input file
-bootstrapfile = os.path.join(input_data_dir_bedmachine,
-                        "bedmachine_"+grid_id+".nc")
+#bootstrapfile = os.path.join(input_data_dir_bedmachine,
+#                        "bedmachine_"+grid_id+".nc")
 
 
 # nomass run: regrid only the tillwat variable from a fit with rignot velocities
@@ -140,7 +140,9 @@ infile_smoothing = os.path.join(working_dir,"dev_061_initmip16km_testing_small_e
 
 # infile = bootstrapfile
 # infile_full_physics = os.path.join(working_dir,"picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc")
-infile_full_physics = os.path.join(store_data_dir,"pism1.1_070_initmip16km_ensemble_bedmap2_nomass_adjtillwat/no_mass_tillwat")
+#infile_full_physics = os.path.join(store_data_dir,"pism1.1_070_initmip16km_ensemble_bedmap2_nomass_adjtillwat/no_mass_tillwat")
+infile_full_physics = os.path.join(store_data_dir,"pism1.1_070_initmip16km_ensemble_bedmap2_nomass_adjtillwat/no_mass_tillwat100linear")
+
 
 # forcing: see below 
 
@@ -174,7 +176,7 @@ param_iterables = {}
 #param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.03,0.025,0.04]
 #param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
 #param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
-#param_iterables["calving.eigen_calving.K"] = [1.0e16, 5.0e16, 1.0e17, 5.0e17, 1.0e18]
+param_iterables["calving.eigen_calving.K"] = [1.0e16, 5.0e16, 1.0e17, 5.0e17, 1.0e18]
 # special case topg_to_phi caught by if clause later:
 #param_iterables["topg_to_phi"] = [
 #[2.,20.,-700.,500.],

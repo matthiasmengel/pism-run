@@ -30,7 +30,7 @@ grid_id = "initmip8km" # FIXME
 # common name (_small_ensemble_) and an additional identifies for the current 
 # run step (_forcing_) 
 # FIXME
-experiment = code_version+"_075_"+grid_id+"_bedmap2_testing_thkcalv50_adjtillwat100linear" # no _
+experiment = code_version+"_075_"+grid_id+"_bedmap2_testing_calvthk50_okill_phimin2_forcing" # no _
 
 
 # directories
@@ -45,7 +45,7 @@ atm_data_dir = os.path.join(input_root_dir_mengel,"merged")
 ocn_data_dir = os.path.join(input_root_dir_mengel,"schmidtko")
 # FIXME
 # 4km, 16km
-# ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p003_testing")
+#ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p003_testing")
 # 8km
 ocn_data_dir2 = os.path.join(input_root_dir,"pycmip5/p004_8kmprojections")
 
@@ -64,7 +64,7 @@ override_params = collections.OrderedDict([
 ("basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden", 0.03),
 ("basal_resistance.pseudo_plastic.q", 0.75),
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.enabled",  "yes"),
-("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_min", 5.0), # 5.0
+("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_min", 2.0), # FIXME 5.0
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.phi_max", 50.0),
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_min", -700.0),
 ("basal_yield_stress.mohr_coulomb.topg_to_phi.topg_max", 500.0),
@@ -90,6 +90,7 @@ override_params = collections.OrderedDict([
 #("stress_balance.ssa.fd.max_speed", 10e3),
 #("stress_balance.sia.limit_diffusivity", "yes"),
 #("stress_balance.sia.max_diffusivity", 10),
+#("hydrology.use_const_bmelt", "yes"),
 ])
 
 
@@ -100,16 +101,16 @@ override_params = collections.OrderedDict([
 # case you might want to limit sia-diffusivity and ssa velocities using config_override)
 # full_physics: run with full physics, select start year and input type below, select parametes for ensemble below
 # forcing: run forcing experiment, select forcing files below, FIXME this does not exist yet!
-steps = ["full_physics"]
+steps = ["forcing"]
 
 
 # FIXME For full_physics, forcing: select the start year and duration
 # "full_physics"
-startyear = 1000
-length = 1000
+#startyear = 1000
+#length = 1000
 # "forcing"
-#startyear = 1850
-#length = 450
+startyear = 1850
+length = 450
 
 
 # Only full_physics: select the init type
@@ -131,7 +132,7 @@ bootstrapfile = os.path.join(input_data_dir,
 
 # nomass run: regrid only the tillwat variable from a fit with rignot velocities
 regridfile_tillwat = os.path.join(tillwat_data_dir,
-		       "tillwat_initmip16km_adj_rignot.nc")
+		       "tillwat_initmip16km_adj_rignot_tillwat100linear.nc")
 # infile = "no_mass.nc"
 
 # use the smoothing file created with esia=essa=1
@@ -164,9 +165,9 @@ its = ["CSIRO-Mk3-6-0_historical+rcp85","GFDL-CM3_historical+rcp85","IPSL-CM5A-L
 
 iterables = {}
 # FIXME include the ocean file iterables for "forcing" runs: 
-#iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
-#   "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
-#   for k in its}
+iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
+   "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
+   for k in its}
 
 # "full_physics": to create parameter ensemble
 param_iterables = {}
@@ -176,7 +177,7 @@ param_iterables = {}
 #param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.03,0.025,0.04]
 #param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
 #param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
-param_iterables["calving.eigen_calving.K"] = [1.0e16, 5.0e16, 1.0e17, 5.0e17, 1.0e18]
+#param_iterables["calving.eigen_calving.K"] = [1.0e16, 5.0e16, 1.0e17, 5.0e17, 1.0e18]
 # special case topg_to_phi caught by if clause later:
 #param_iterables["topg_to_phi"] = [
 #[2.,20.,-700.,500.],
@@ -196,27 +197,27 @@ param_iterables["calving.eigen_calving.K"] = [1.0e16, 5.0e16, 1.0e17, 5.0e17, 1.
 
 
 # FIXME forcing: add also a control run in which the ocean data from before is used (e.g., schmidtko) 
-# iterables["oceanfile"].update({"base":oceanfile})
+iterables["oceanfile"].update({"base":oceanfile})
 
 # for continue_set.py and create_set_forcing.py:
 # This allows to continue a number of runs as specified in runs_to_continue from the full_physics ensemble
 # it is also used to create forcing runs (can also be a dummy containing only one run):
-source_ensemble_table = "pism1.1_075_initmip8km_bedmap2_testing_ensemble_calvthk50_okill_fake.txt"
+source_ensemble_table = "pism1.1_075_initmip8km_bedmap2_mini_ensemble_thkcalv50_phimin.txt"
 
 # For continue_set.py:  a subset of the hashes in ensemble_table, can also be "all".
-runs_to_continue = "data/lists_of_best/dev_063_initmip16km_testing_small_ensemble_full_physics.txt" #"data/lists_of_best/dev_058_initmip4km_resoensemble5best_20_amundsen_vel_gl.txt"
+runs_to_continue = "data/lists_of_best/pism1.1_075_initmip8km_bedmap2_mini_ensemble_thkcalv50_phimin.txt" #"data/lists_of_best/dev_058_initmip4km_resoensemble5best_20_amundsen_vel_gl.txt"
 
 # For "forcing": infile is created in create_set_forcing by using get_infile_to_continue(ehash, year)
 # specify the infile(s) for the forcing run  
 #runs_for_forcing = "data/lists_of_best/dev_063_initmip16km_testing_small_ensemble_full_physics_forcing.txt"
-runs_for_forcing = "data/lists_of_best/pism1.1_075_initmip8km_bedmap2_testing_calvthk50_okill.txt"
+runs_for_forcing = "data/lists_of_best/pism1.1_075_initmip8km_bedmap2_mini_ensemble_thkcalv50_phimin.txt"
 
 
 # ensemble hash is inserted between infile_continue[0] and infile_continue[1]
 # infile_continue = ["/gpfs/work/pn69ru/di36lav2/pism_store/dev_058_initmip4km_resoensemble5/dev_058_initmip4km_resoensemble5_",
 # "snapshots_2300.000.nc"]
 def get_infile_to_continue(ehash, year):
-    pre = os.path.join(store_data_dir, "pism1.1_075_initmip8km_bedmap2_testing_ensemble", "pism1.1_075_initmip8km_bedmap2_testing_calvthk50_okill_")
+    pre = os.path.join(store_data_dir, "pism1.1_075_initmip8km_bedmap2_testing_ensemble", "pism1.1_075_initmip8km_bedmap2_mini_ensemble_thkcalv50_phimin_")
     fle = ["snapshots_",".000.nc"]
     return os.path.join(pre+ehash,fle[0]+str(year)+fle[1])
 

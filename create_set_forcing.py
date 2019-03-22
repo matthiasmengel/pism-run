@@ -31,7 +31,7 @@ for ehash, year in runs_for_forcing.values: # FIXME this works currently only fo
 	#	else:
 	#		settings.override_params[col] = ensemble_table.loc[ehash,col]
 
-	settings.infile_forcing = settings.get_infile_to_continue(ehash, year)
+	settings.infile_forcing = settings.get_infile_to_continue(str(ehash), year)
 	print(settings.infile_forcing)
 	# set newly defined iterables
 	# !Attention, model parameters might be overwritten

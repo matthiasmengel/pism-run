@@ -30,7 +30,7 @@ grid_id = "initmip4km" # FIXME
 # common name (_small_ensemble_) and an additional identifies for the current 
 # run step (_forcing_) 
 # FIXME
-experiment = code_version+"_075_"+grid_id+"_bedmap2_testing_calvthk50_okill_tillphi2_mediumtemps_forcing" # no _
+experiment = code_version+"_075_"+grid_id+"_bedmap2_ensemble_amedtem" # no _
 
 
 # directories
@@ -101,16 +101,16 @@ override_params = collections.OrderedDict([
 # case you might want to limit sia-diffusivity and ssa velocities using config_override)
 # full_physics: run with full physics, select start year and input type below, select parametes for ensemble below
 # forcing: run forcing experiment, select forcing files below, FIXME this does not exist yet!
-#steps = ["full_physics"]
-steps = ["forcing"]
+steps = ["full_physics"]
+#steps = ["forcing"]
 
 # FIXME For full_physics, forcing: select the start year and duration
 # "full_physics"
-#startyear = 1000
-#length = 2000
+startyear = 1000
+length = 2000
 # "forcing"
-startyear = 1850
-length = 450
+#startyear = 1850
+#length = 450
 
 
 # Only full_physics: select the init type
@@ -130,9 +130,9 @@ bootstrapfile = os.path.join(input_data_dir,
 #                        "bedmachine_"+grid_id+".nc")
 
 
-# nomass run: regrid only the tillwat variable from a fit with rignot velocities
+# "nomass" run: regrid only the tillwat variable from a fit with rignot velocities
 regridfile_tillwat = os.path.join(tillwat_data_dir,
-		       "tillwat_initmip16km_adj_rignot_tillwat100linear.nc")
+		       "tillwat_initmip16km_adj_rignot_tillwat100.nc")
 # infile = "no_mass.nc"
 
 # use the smoothing file created with esia=essa=1
@@ -142,7 +142,7 @@ infile_smoothing = os.path.join(working_dir,"dev_061_initmip16km_testing_small_e
 # infile = bootstrapfile
 # infile_full_physics = os.path.join(working_dir,"picobw_052_initmip4km_testing_tillphi_tw5/no_mass_tillphi_tillwatmod.nc")
 #infile_full_physics = os.path.join(store_data_dir,"pism1.1_070_initmip16km_ensemble_bedmap2_nomass_adjtillwat/no_mass_tillwat")
-infile_full_physics = os.path.join(store_data_dir,"pism1.1_070_initmip16km_ensemble_bedmap2_nomass_adjtillwat/no_mass_tillwat100linear")
+infile_full_physics = os.path.join(store_data_dir,"pism1.1_070_initmip16km_ensemble_bedmap2_nomass_adjtillwat/no_mass_tillwat100")
 
 
 # forcing: see below 
@@ -166,17 +166,17 @@ its = ["CSIRO-Mk3-6-0_historical+rcp85","GFDL-CM3_historical+rcp85","IPSL-CM5A-L
 
 iterables = {}
 # FIXME include the ocean file iterables for "forcing" runs: 
-iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
-   "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
-   for k in its}
+#iterables["oceanfile"] = { k : os.path.join(ocean_data_dir,
+#   "thetao_Omon_"+k+"_r1i1p1/schmidtko_anomaly/thetao_Omon_"+k+"_r1i1p1_"+grid_id+"_100km.nc")
+#   for k in its}
 
 # "full_physics": to create parameter ensemble
 param_iterables = {}
 # FIXME: include parameters for full_physics ensemble
 #param_iterables["stress_balance.sia.enhancement_factor"] = [1.0,2.0]
 #param_iterables["stress_balance.ssa.enhancement_factor"] = [1.0,0.4]
-#param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.03,0.025,0.04]
-#param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.25,0.5]
+param_iterables["basal_yield_stress.mohr_coulomb.till_effective_fraction_overburden"] = [0.01,0.02,0.03,0.04]
+param_iterables["basal_resistance.pseudo_plastic.q"] = [0.75,0.5,0.33,0.25,0.1]
 #param_iterables["hydrology.tillwat_decay_rate"] = [2,5,8]
 #param_iterables["calving.eigen_calving.K"] = [1.0e16, 5.0e16, 1.0e17, 5.0e17, 1.0e18]
 # special case topg_to_phi caught by if clause later:
@@ -198,7 +198,7 @@ param_iterables = {}
 
 
 # FIXME forcing: add also a control run in which the ocean data from before is used (e.g., schmidtko) 
-iterables["oceanfile"].update({"base":oceanfile})
+#iterables["oceanfile"].update({"base":oceanfile})
 
 # for continue_set.py and create_set_forcing.py:
 # This allows to continue a number of runs as specified in runs_to_continue from the full_physics ensemble

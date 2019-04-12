@@ -30,7 +30,7 @@ grid_id = "initmip4km" # FIXME
 # common name (_small_ensemble_) and an additional identifies for the current 
 # run step (_forcing_) 
 # FIXME
-experiment = code_version+"_075_"+grid_id+"_bedmap2_ensemble_amedtem" # no _
+experiment = code_version+"_075_"+grid_id+"_bedmachine_ensemble_amedtem" # no _
 
 
 # directories
@@ -87,9 +87,9 @@ override_params = collections.OrderedDict([
 ("ocean.pico.exclude_ice_rises", "yes"),
 ("hydrology.set_tillwat_ocean", "yes"), # use Mattias tillwat fix
 ## Include limit for the nomass runs! FIXME nomass only! And for Bedmachine because of convergence errors
-#("stress_balance.ssa.fd.max_speed", 10e3),
-#("stress_balance.sia.limit_diffusivity", "yes"),
-#("stress_balance.sia.max_diffusivity", 10),
+("stress_balance.ssa.fd.max_speed", 10e3),
+("stress_balance.sia.limit_diffusivity", "yes"),
+("stress_balance.sia.max_diffusivity", 10),
 #("hydrology.use_const_bmelt", "yes"),
 ])
 
@@ -123,11 +123,11 @@ init="regrid"
 grid = grids.grids[grid_id]
 
 # FIXME BEDMAP2 input files, used in nomass and for topography and ice thickness in full_physics (regridding) 
-bootstrapfile = os.path.join(input_data_dir,
-                      "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
+#bootstrapfile = os.path.join(input_data_dir,
+#                      "bedmap2_albmap_racmo_wessem_tillphi_pism_"+grid_id+".nc")
 # FIXME BEDMACHINE input file
-#bootstrapfile = os.path.join(input_data_dir_bedmachine,
-#                        "bedmachine_"+grid_id+".nc")
+bootstrapfile = os.path.join(input_data_dir_bedmachine,
+                        "bedmachine_"+grid_id+".nc")
 
 
 # "nomass" run: regrid only the tillwat variable from a fit with rignot velocities
